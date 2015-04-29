@@ -33,6 +33,6 @@ var styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: '#000',
-    opacity: 0.5
+    opacity: 0.3
   }
 });
