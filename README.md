@@ -1,8 +1,9 @@
-# Leanote for iOS
 ![leanote](https://raw.githubusercontent.com/leanote/leanote-ios/master/iOS/Images.xcassets/lealogo.imageset/lealogo.png)
-
+# Leanote for iOS
 Based on React-Native, Developing stage.
 
-ScreenShoot:
+## ScreenShoot:
 
-![launch](https://raw.githubusercontent.com/leanote/leanote-ios/master/iOS/Images.xcassets/LaunchImage.launchimage/start2x.png)
+![launch](http://i1.tietuku.com/239b0540a454c8f8.jpg)
+
+![login](http://i1.tietuku.com/7cdc4d9fda87c70c.jpg)
