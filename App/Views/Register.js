@@ -27,8 +27,6 @@ module.exports = React.createClass({
   },
 
   _doReg: function() {
-    console.log(this.state.email);
-    console.log(this.state.password);
 
     this.setState({startReg: true});
 
@@ -40,7 +38,7 @@ module.exports = React.createClass({
     // 合法性检查
     if(email === "" || pwd === "") {
       this.setState({startReg: false});
-      Base.showMsg("注册失败", "请输入登录信息！");
+      Base.showMsg("注册失败", "请输入基本信息！");
       return;
     } else if(email.indexOf("@") < 0) {
       this.setState({startReg: false});
@@ -80,7 +78,7 @@ module.exports = React.createClass({
         if(res["Ok"] === true) {
           this.setState({startReg: false});
           Base.showMsg("注册成功", "恭喜您，账户创建成功！");
-          this.props.navigator.pop();
+          this.props.navigator.replace({ id: 'home' });
           return;
         }
 

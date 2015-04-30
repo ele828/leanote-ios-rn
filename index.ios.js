@@ -9,8 +9,9 @@ var {
   Text,
 } = React;
 
-var LoginView = require('./App/Views/LoginView.js');
-var RegView   = require('./App/Views/RegView.js')
+var Home       = require('./App/Views/Home');
+var Login      = require('./App/Views/Login');
+var Register   = require('./App/Views/Register')
 
 var leanote = React.createClass({
   render: function() {
@@ -23,17 +24,24 @@ var leanote = React.createClass({
 });
 
 var leanote = React.createClass({
+  getInitialState: function() {
+    return {
+      logined: false
+    };
+  },
   renderScene: function(route, nav) {
       switch (route.id) {
-        case 'main':
-          return <View><Text>main</Text></View>;
+        case 'home':
+          return <Home navigator={nav}/>;
+        case 'login':
+          return <Login navigator={nav}/>;
         case 'register':
-          return <RegView navigator={nav}/>
+          return <Register navigator={nav}/>
         case 'jumping':
           return <Vv navigator={nav}/>
         default:
           return (
-            <LoginView navigator={nav}/>
+            <Login navigator={nav}/>
           );
       }
 
@@ -41,17 +49,17 @@ var leanote = React.createClass({
   render: function() {
     return (
       <Navigator
-        style={{backgroundColor: '#fff'}}
-        initialRoute={{ id: "1" }}
-        renderScene={this.renderScene}
-        configureScene={(route) => {
-            if (route.sceneConfig) {
-                return route.sceneConfig;
-            }
-            return Navigator.SceneConfigs.FloatFromRight
+      style={{backgroundColor: '#fff'}}
+      initialRoute={{ id: "login" }}
+      renderScene={this.renderScene}
+      configureScene={(route) => {
+          if (route.sceneConfig) {
+              return route.sceneConfig;
           }
+          return Navigator.SceneConfigs.FloatFromRight
         }
-      />
+      }
+    />
     )
   }
 });
