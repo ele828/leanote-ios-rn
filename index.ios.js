@@ -10,6 +10,7 @@ var {
 } = React;
 
 var LoginView = require('./App/Views/LoginView.js');
+var RegView   = require('./App/Views/RegView.js')
 
 var leanote = React.createClass({
   render: function() {
@@ -27,7 +28,7 @@ var leanote = React.createClass({
         case 'main':
           return <View><Text>main</Text></View>;
         case 'register':
-          return <View navigator={nav}><Text>123</Text></View>
+          return <RegView navigator={nav}/>
         case 'jumping':
           return <Vv navigator={nav}/>
         default:
@@ -47,7 +48,7 @@ var leanote = React.createClass({
             if (route.sceneConfig) {
                 return route.sceneConfig;
             }
-            return Navigator.SceneConfigs.FloatFromBottom
+            return Navigator.SceneConfigs.FloatFromRight
           }
         }
       />
