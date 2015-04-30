@@ -64,7 +64,7 @@ module.exports = React.createClass({
             />
             <View style={styles.line}></View>
             <View style={styles.buttonGroup}>
-              <TouchableOpacity activeOpacity="0.8" onPress={this._doLogin}>
+              <TouchableOpacity activeOpacity="0.8" onPress={this._doReg}>
                 <View style={styles.Reg}>
                   <Text style={styles.RegText}>创  建  账  户</Text>
                 </View>
