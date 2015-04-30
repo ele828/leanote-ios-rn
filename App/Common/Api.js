@@ -12,5 +12,7 @@ module.exports = {
   Login: BASE_ADDRESS + '/auth/login',
   //注册
   Register: BASE_ADDRESS + '/auth/register',
+  // 获取增量同步的所有笔记
+  SyncNotes: BASE_ADDRESS + '/note/getSyncNotes',
 
 }

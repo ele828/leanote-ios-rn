@@ -105,7 +105,7 @@ module.exports = React.createClass({
 
     return (
       <View style={styles.container}>
-      <Image source={require('image!lealogo_blue')} style={styles.logo}/>
+      <Image source={require('image!lealogo')} style={styles.logo}/>
         <View style={styles.form}>
             <TextInput
               style={styles.inputs}
@@ -185,7 +185,7 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     width: Base.width/1.3,
     height: 40,
-    backgroundColor: '#0379d5',
+    backgroundColor: '#019b0d',
   },
   RegText: {
     marginTop: 10,
