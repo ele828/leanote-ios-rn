@@ -1,8 +1,14 @@
+/**
+ * App登录界面
+ *
+ */
+
 'use strict';
 
 var React = require('react-native');
 var {
   AppRegistry,
+  AsyncStorage,
   StyleSheet,
   View,
   Text,
@@ -11,15 +17,77 @@ var {
   TouchableOpacity
 } = React;
 
-// some Basic properties
+
+var Api = require("../Common/Api");
 var Base = require("../Common/Base");
 var Spinner = require("../Components/Spinner");
 
 var LoginView = React.createClass({
   _doLogin: function() {
-    this.setState({inputDone: true});
-    console.log(this.state.email)
-    console.log(this.state.password)
+    this.setState({startLogin: true});
+
+    // 构造登录数据
+    var email = this.state.email;
+    var pwd   = this.state.password;
+    var data  = "?email=" + email + "&pwd=" + pwd;
+    var LoginAddr = encodeURI(Api.Login + data);
+
+    fetch(LoginAddr, {method:"GET"})
+      .then((response) => response.json())
+      .then((res)=>{
+
+        // 用户名或密码错误
+        if(res["Ok"] === false) {
+          console.error("用户名或密码错误!");
+          this.setState({startLogin: false});
+          Base.showMsg("登录失败", "用户名或密码错误!");
+          return;
+        }
+
+        // 登录成功
+        if(res["Ok"] === true){
+          console.error("登录成功!");
+          var token  = res["Token"],
+              userId = res["UserId"],
+              email  = res["Email"];
+
+          // 储存用户信息以及Token
+          AsyncStorage.setItem("User:token", token)
+            .catch((err)=>{
+              this.setState({startLogin: false});
+              Base.showMsg("系统错误", "登录失败，请重试！");
+            });
+
+          AsyncStorage.setItem("User:id", userId)
+            .catch((err)=>{
+              this.setState({startLogin: false});
+              Base.showMsg("系统错误", "登录失败，请重试！");
+            });
+
+          AsyncStorage.setItem("User:email", email)
+            .catch((err)=>{
+              this.setState({startLogin: false});
+              Base.showMsg("系统错误", "登录失败，请重试！");
+            });
+
+          AsyncStorage.getItem("User:email")
+            .catch((err)=>{
+              this.setState({startLogin: false});
+              Base.showMsg("系统错误", "登录失败，请重试！");
+            });
+
+          // 跳转到主界面
+          this.setState({startLogin: false});
+          this.props.navigator.push({ id: 'register' });
+        }
+
+      })
+      // 网络或其他异常处理
+      .catch((err) => {
+        this.setState({startLogin: false});
+        Base.showMsg("网络错误", "登录失败，请检查网络！");
+      })
+      .done();
   },
 
   _doReg: function() {
@@ -30,11 +98,11 @@ var LoginView = React.createClass({
     return {
       email: '',
       password: '',
-      inputDone: false
+      startLogin: false
     }
   },
   render: function() {
-    var spinner = this.state.inputDone ?
+    var spinner = this.state.startLogin ?
       ( <Spinner/> ) :
       ( <View/>);
 

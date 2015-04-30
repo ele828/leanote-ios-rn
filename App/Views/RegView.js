@@ -1,3 +1,8 @@
+/**
+ * App注册界面
+ *
+ */
+
 'use strict';
 
 var React = require('react-native');
@@ -12,6 +17,7 @@ var {
 } = React;
 
 // some Basic properties
+var Api = require("../Common/Api");
 var Base = require("../Common/Base");
 var Spinner = require("../Components/Spinner");
 
@@ -21,18 +27,81 @@ module.exports = React.createClass({
   },
 
   _doReg: function() {
-    //this.props.navigator.push({ id: 'register' });
+    console.log(this.state.email);
+    console.log(this.state.password);
+
+    this.setState({startReg: true});
+
+    var email = this.state.email;
+    var pwd   = this.state.password;
+    var data  = "?email=" + email + "&pwd=" + pwd;
+    var RegAddr = encodeURI(Api.Register + data);
+
+    // 合法性检查
+    if(email === "" || pwd === "") {
+      this.setState({startReg: false});
+      Base.showMsg("注册失败", "请输入登录信息！");
+      return;
+    } else if(email.indexOf("@") < 0) {
+      this.setState({startReg: false});
+      Base.showMsg("注册失败", "请输入正确的邮箱地址！");
+      return;
+    }
+
+    // 发起注册请求
+    fetch(RegAddr, {method:"POST"})
+      .then((response) => response.json())
+
+      // 处理注册逻辑
+      .then((res)=>{
+        // 注册失败
+        if(res["Ok"] === false) {
+          if(res["Msg"] == "errorEmail") {
+            this.setState({startReg: false});
+            Base.showMsg("注册失败", "请输入合法的邮箱地址！");
+            return;
+          }
+
+          if(res["Msg"] == "errorPassword") {
+            this.setState({startReg: false});
+            Base.showMsg("注册失败", "密码格式不正确！");
+            return;
+          }
+
+          if(res["Msg"].indexOf("userHasBeenRegistered") != -1) {
+            this.setState({startReg: false});
+            Base.showMsg("注册失败", "该邮箱已被注册！");
+            return;
+          }
+
+        }
+
+        // 注册成功
+        if(res["Ok"] === true) {
+          this.setState({startReg: false});
+          Base.showMsg("注册成功", "恭喜您，账户创建成功！");
+          this.props.navigator.pop();
+          return;
+        }
+
+      })
+      .catch((err)=>{
+        this.setState({startReg: false});
+        Base.showMsg("注册失败", "网络错误！");
+        return;
+      })
+      .done();
   },
 
   getInitialState: function() {
     return {
       email: '',
       password: '',
-      inputDone: false
+      startReg: false
     }
   },
   render: function() {
-    var spinner = this.state.inputDone ?
+    var spinner = this.state.startReg ?
       ( <Spinner/> ) :
       ( <View/>);
 
