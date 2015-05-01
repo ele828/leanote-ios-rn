@@ -12,6 +12,7 @@ var {
 } = React;
 
 var Base = require("../Common/Base");
+var Icon = require("react-native-icons");
 
 var Tweet = React.createClass({
 
@@ -24,9 +25,28 @@ var Tweet = React.createClass({
       note
     } = this.props;
     return (
-      <TouchableHighlight underlayColor="transparent" onPress={this.goToTweet}>
-        <View style={styles.tweetContainer}>
-          <Text style={{alignItems: 'center', width: Base.width}}>{note["Title"]}</Text>
+      <TouchableHighlight underlayColor="#eee" onPress={this.goToTweet}>
+        <View style={styles.container}>
+          <Text
+            style={styles.noteText}
+            numberOfLines={1}
+            >{note["Title"]}</Text>
+            <View style={styles.info}>
+              <Icon
+                name='fontawesome|book'
+                size={13}
+                color='#ccc'
+                style={styles.bookIcon}
+              />
+              <Text style={styles.noteBook}>{note["UpdatedTime"]}</Text>
+              <Icon
+                name='fontawesome|clock-o'
+                size={13}
+                color='#ccc'
+                style={styles.clockIcon}
+              />
+              <Text style={styles.updateTime}>{note["UpdatedTime"]}</Text>
+            </View>
         </View>
       </TouchableHighlight>
     )
@@ -34,41 +54,45 @@ var Tweet = React.createClass({
 });
 
 var styles = StyleSheet.create({
-  tweetContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
+  container: {
+    alignSelf: 'center',
+    justifyContent: 'center',
     borderBottomWidth: 1,
     borderColor: '#DAE6F0',
     paddingTop: 4,
-    paddingBottom: 10
+    paddingBottom: 10,
   },
-  avatar: {
-    backgroundColor: 'gray',
-    width: 50,
-    height: 50,
-    marginLeft: 10,
-    borderRadius: 4
+  noteText: {
+    paddingTop: 5,
+    paddingLeft: 20,
+    paddingRight: 15,
+    alignSelf: 'center',
+    alignItems: 'center',
+    width: Base.width,
+    fontSize: 14,
   },
-  userContainer: {
-    flexDirection: 'row'
+  updateTime: {
+    marginTop: 2,
+    color: '#838383',
+    fontSize: 12,
   },
-  username: {
-    marginLeft: 4,
-    fontSize: 13,
-    color: '#8999a5',
-    marginTop: 2
+  noteBook: {
+    marginTop: 2,
+    color: '#838383',
+    fontSize: 12,
   },
-  name: {
-    fontWeight: '600',
-    fontSize: 15
+  info: {
+    marginTop: 8,
+    marginLeft: 15,
+    flexDirection: 'row',
   },
-  text: {
-    marginTop: 5
+  bookIcon: {
+    width: 20,
+    height:20,
   },
-  rightContainer: {
-    flex: 1,
-    padding: 10
+  clockIcon: {
+    width: 20,
+    height:20,
   }
 });
 

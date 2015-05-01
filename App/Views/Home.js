@@ -18,7 +18,6 @@ var {
   ScrollView
 } = React;
 
-
 var Api = require("../Common/Api");
 var Base = require("../Common/Base");
 var Spinner = require("../Components/Spinner");
@@ -26,8 +25,10 @@ var Spinner = require("../Components/Spinner");
 var Router = require('react-native-router');
 var AlLNoteList = require('./AllNoteList.js');
 
+var BackButton = require("../Components/BackButton");
+
 var firstRoute = {
-  name: '我的笔记本',
+  name: '所有笔记',
   component: AlLNoteList
 };
 
@@ -38,6 +39,7 @@ module.exports = React.createClass({
         <Router
           firstRoute={firstRoute}
           headerStyle={styles.header}
+          backButtonComponent={BackButton}
           />
       </View>
     )

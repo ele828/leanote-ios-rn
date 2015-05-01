@@ -6,7 +6,9 @@
     "start": "node_modules/react-native/packager/packager.sh"
   },
   "dependencies": {
+    "moment": "^2.10.2",
     "react-native": "^0.4.1",
+    "react-native-icons": "0.0.5",
     "react-native-router": "^0.1.3"
   }
 }

@@ -18,9 +18,13 @@ var {
   ScrollView
 } = React;
 
-
 var Api = require("../Common/Api");
 var Base = require("../Common/Base");
+var Tools = require("../Common/Tools");
+var Fetcher = require("../Common/Fetcher");
+var Storage = require("../Common/Storage");
+
+var Icon = require("react-native-icons");
 var Spinner = require("../Components/Spinner");
 
 var Router = require('react-native-router');
@@ -36,6 +40,10 @@ module.exports = React.createClass({
   },
 
   componentDidMount: function() {
+    //Fetcher.getSyncNoteBooks();
+    // 从本地获取笔记
+    this._loadNotesFromStorage();
+    // 从网络更新笔记
     this._fetchSyncNotes();
   },
 
@@ -46,32 +54,23 @@ module.exports = React.createClass({
     }
   },
 
-  _fetchSyncNotes: function() {
-
-    AsyncStorage.getItem("User:token")
-      .then((token)=>{
-          var data = "?token=" + token + "&afterUsn=" + 0 + "&maxEntry=" + 100;
-          var syncNotesAddr = encodeURI(Api.SyncNotes + data);
-          fetch(syncNotesAddr, {method:"GET"})
-            .then((response) => response.json())
-
-            // 获取增量更新列表
-            .then((res)=>{
-
-              var nums = res.length;
-              for(var i = 0; i < nums; i++) {
-                if(!res[i]["IsDeleted"]) {
-                  this.state.notes.push(res[i]);
-                }
-              }
-              this.setState( {  notes : this.state.notes.reverse() });
-              this.setState({notesLoaded: true});
-              // console.log(this.state.notes);
-            })
+  _loadNotesFromStorage: function() {
+    Storage.getAllNotes()
+      .then((notes)=>{
+        return JSON.parse(notes);
       })
-      .catch((err)=>{
-
+      .then((notes)=>{
+        // console.log(notes);
+        this.setState( {  notes : notes });
+        this.setState({notesLoaded: true});
       });
+  },
+
+  _fetchSyncNotes: function() {
+    Fetcher.getSyncNotes()
+      .then(()=>{
+        this._loadNotesFromStorage();
+      })
   },
 
   render: function() {
@@ -79,18 +78,56 @@ module.exports = React.createClass({
       return <NoteCell note={note} goToTweet={this.goToTweet} />;
     })
     return (
-      <ScrollView style={styles.container}>
-        {Notes}
-      </ScrollView>
+      <View style={styles.wrap}>
+        <ScrollView style={styles.container}>
+          {Notes}
+        </ScrollView>
+        <TouchableOpacity activeOpacity="0.7" onPress={()=>{
+          Fetcher.getSyncNotes()
+            .then(()=>{
+              this._loadNotesFromStorage();
+            })
+        }
+        }>
+          <View style={styles.plus}>
+            <Icon
+              name='fontawesome|plus'
+              size={18}
+              color='#fff'
+              style={styles.plusIcon}
+            />
+          </View>
+        </TouchableOpacity>
+
+      </View>
     );
   }
 });
 
 var styles = StyleSheet.create({
+  wrap: {
+    width: Base.width,
+    height: Base.height-60,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff'
   },
+  plus: {
+    position: 'absolute',
+    top: Base.height - 130,
+    right: 30,
+    width: 35,
+    height: 35,
+    borderRadius: 18,
+    backgroundColor: '#08c917',
+  },
+  plusIcon: {
+    width: 35,
+    height: 35,
+    borderRadius: 17,
+  },
+
   header: {
     backgroundColor: '#0379d5'
   }
