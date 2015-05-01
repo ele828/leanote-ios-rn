@@ -18,6 +18,8 @@ var {
   ScrollView
 } = React;
 
+var TimerMixin = require('react-timer-mixin');
+
 var Api = require("../Common/Api");
 var Base = require("../Common/Base");
 var Tools = require("../Common/Tools");
@@ -26,12 +28,15 @@ var Storage = require("../Common/Storage");
 
 var Icon = require("react-native-icons");
 var Spinner = require("../Components/Spinner");
+var Msg = require("../Components/Msg");
 
 var Router = require('react-native-router');
 var NoteCell = require('../Components/NoteCell');
 
-module.exports = React.createClass({
+var ViewNote = require("./ViewNote");
 
+module.exports = React.createClass({
+  mixins: [TimerMixin],
   nextPage: function() {
     this.props.toRoute({
       name: "A new screen",
@@ -48,9 +53,11 @@ module.exports = React.createClass({
   },
 
   getInitialState: function() {
+    console.log('state');
     return {
       notes: [],
       notesLoaded: false,
+      fetchingNotes: false
     }
   },
 
@@ -73,13 +80,37 @@ module.exports = React.createClass({
       })
   },
 
+  goToNote: function(note) {
+      this.props.toRoute({
+        name: note["Title"],
+        component: ViewNote,
+        data: {note: note}
+      });
+  },
+  msg: <View></View>,
   render: function() {
+    // 增量更新监听
+    if(this.props.data.update === true) {
+      this.state.fetchingNotes = true;
+      this._fetchSyncNotes();
+      this.props.data.update = false;
+      this.setTimeout(()=>{
+        this.setState({fetchingNotes: false});
+      },2200);
+    }
+
+    if(this.state.fetchingNotes === true) {
+      this.msg = <Msg msg="更新笔记中..."/>;
+    } else {
+      this.msg = <View></View>;
+    }
     var Notes = this.state.notes.map((note) => {
-      return <NoteCell note={note} goToTweet={this.goToTweet} />;
+      return <NoteCell note={note} goToTweet={this.goToNote} />;
     })
+
     return (
       <View style={styles.wrap}>
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.container} ref="notesList">
           {Notes}
         </ScrollView>
         <TouchableOpacity activeOpacity="0.7" onPress={()=>{
@@ -98,7 +129,7 @@ module.exports = React.createClass({
             />
           </View>
         </TouchableOpacity>
-
+        {this.msg}
       </View>
     );
   }

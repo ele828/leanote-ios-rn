@@ -15,7 +15,7 @@ module.exports = React.createClass({
     return(
       <View style={styles.container}>
         <ActivityIndicatorIOS
-          style={{height: 80}}
+          style={{top: this.props.top}}
           size="large"
         />
       </View>
@@ -33,6 +33,6 @@ var styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: '#000',
-    opacity: 0.3
+    opacity: 0.25
   }
 });

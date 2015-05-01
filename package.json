@@ -9,6 +9,7 @@
     "moment": "^2.10.2",
     "react-native": "^0.4.1",
     "react-native-icons": "0.0.5",
-    "react-native-router": "^0.1.3"
+    "react-native-router": "^0.1.3",
+    "react-tween-state": "0.0.5"
   }
 }

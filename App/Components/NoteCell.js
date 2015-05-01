@@ -17,7 +17,7 @@ var Icon = require("react-native-icons");
 var Tweet = React.createClass({
 
   goToTweet: function() {
-    // this.props.goToTweet(this.props);
+    this.props.goToTweet(this.props.note);
   },
 
   render() {

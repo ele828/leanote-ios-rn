@@ -136,7 +136,7 @@ function getSyncNotes() {
                 for(var i = 0; i < nums; i++) {
                   if(!res[i]["IsDeleted"]) {
                     var date = Tools.dateModifier(res[i]["UpdatedTime"]);
-                    var formatedDate = Tools.formatDate(date, true);
+                    var formatedDate = Tools.formatDate(date);
                     res[i]["UpdatedTime"] = formatedDate;
                     notes.push(res[i]);
                   }

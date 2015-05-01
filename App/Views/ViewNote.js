@@ -6,27 +6,15 @@ var {
   StyleSheet,
   TouchableOpacity,
   View,
+  Text
 } = React;
 
 var Icon = require("react-native-icons");
-var AlLNoteList = require('../Views/AllNoteList.js');
 
 module.exports = React.createClass({
   render() {
     return (
-      <TouchableOpacity activeOpacity="0.7" onPress={()=>{
-        this.props.toRoute({
-          name: "Tweet",
-          component: AlLNoteList
-        });
-      }}>
-          <Icon
-            name='fontawesome|refresh'
-            size={15}
-            color='#fff'
-            style={styles.refreshIcon}
-          />
-      </TouchableOpacity>
+      <View><Text>123</Text></View>
     )
   }
 });
