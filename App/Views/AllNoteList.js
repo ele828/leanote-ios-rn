@@ -35,13 +35,22 @@ var NoteCell = require('../Components/NoteCell');
 
 var ViewNote = require("./ViewNote");
 
-module.exports = React.createClass({
+var props = null;
+
+var AllNoteList = React.createClass({
   mixins: [TimerMixin],
-  nextPage: function() {
-    this.props.toRoute({
-      name: "A new screen",
-      component: HelloPage
-    });
+
+  statics: {
+    goToNote: function() {
+      props.toRoute({
+        name: "我的笔记",
+        component: ViewNote,
+      });
+    },
+
+    goToNoteList: function() {
+      props.toTop();
+    }
   },
 
   componentDidMount: function() {
@@ -50,6 +59,7 @@ module.exports = React.createClass({
     this._loadNotesFromStorage();
     // 从网络更新笔记
     this._fetchSyncNotes();
+    props = this.props;
   },
 
   getInitialState: function() {
@@ -82,11 +92,19 @@ module.exports = React.createClass({
 
   goToNote: function(note) {
       this.props.toRoute({
-        name: note["Title"],
+        name: "我的笔记",
         component: ViewNote,
         data: {note: note}
       });
   },
+
+  goNoteBooks: function() {
+    this.props.toRoute({
+      name: "我的笔记本",
+      component: ViewNote,
+    });
+  },
+
   msg: <View></View>,
   render: function() {
     // 增量更新监听
@@ -97,6 +115,12 @@ module.exports = React.createClass({
       this.setTimeout(()=>{
         this.setState({fetchingNotes: false});
       },2200);
+    }
+
+    if(this.props.data.goNoteBooks === true) {
+      this.props.data.goNoteBooks = false;
+      this.goNoteBooks();
+      console.log("tetstste")
     }
 
     if(this.state.fetchingNotes === true) {
@@ -110,7 +134,7 @@ module.exports = React.createClass({
 
     return (
       <View style={styles.wrap}>
-        <ScrollView style={styles.container} ref="notesList">
+        <ScrollView style={styles.container} ref="notesList"  onStartShouldSetResponder={()=>{console.log(111);return false;}}>
           {Notes}
         </ScrollView>
         <TouchableOpacity activeOpacity="0.7" onPress={()=>{
@@ -163,3 +187,5 @@ var styles = StyleSheet.create({
     backgroundColor: '#0379d5'
   }
 });
+
+module.exports = AllNoteList;
