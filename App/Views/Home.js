@@ -33,122 +33,13 @@ var RefreshButton = require("../Components/RefreshButton");
 var SideMenu = require('react-native-side-menu');
 var Icon = require("react-native-icons");
 
-var TimerMixin = require('react-timer-mixin');
-
-var Menu = React.createClass({
-  mixins: [TimerMixin],
-  render: function() {
-    return (
-      <View>
-        <View style={styles.menuHeader}>
-          <Text style={{
-            color:'#fff',
-            top: 30,
-            left: Base.width* 2 / 8 - 28,
-            fontSize: 15
-          }}></Text>
-        </View>
-        <View style={{
-          borderRightWidth: 1,
-          borderRightColor: '#eee',
-          position: 'absolute',
-          top : 64,
-          width: Base.width* 2 / 4,
-          height: Base.height + 100,
-        }}>
-
-          <ScrollView style={{paddingTop:10}}>
-            <TouchableHighlight underlayColor="#eee" onPress={()=>{
-              AlLNoteList.goToNoteList();
-              this.setTimeout(()=>{
-                this.props.menuActions.close();
-              }, 0);
-            }}>
-                <View style={styles.menuItem}>
-                  <Icon
-                    name='fontawesome|pencil-square'
-                    size={20}
-                    color='#0379d5'
-                    style={styles.ico}
-                  />
-                  <Text style={styles.itemText}>笔记</Text>
-                </View>
-            </TouchableHighlight>
-
-            <TouchableHighlight underlayColor="#eee" onPress={()=>{
-              AlLNoteList.goToNote();
-              this.setTimeout(()=>{
-                this.props.menuActions.close();
-              }, 0);
-            }}>
-                <View style={styles.menuItem}>
-                  <Icon
-                    name='fontawesome|book'
-                    size={20}
-                    color='#08c917'
-                    style={styles.ico}
-                  />
-                  <Text style={[styles.itemText, {marginLeft: 26}]}>笔记本</Text>
-                </View>
-            </TouchableHighlight>
-
-            <TouchableHighlight underlayColor="#eee" onPress={()=>{
-
-            }}>
-                <View style={styles.menuItem}>
-                  <Icon
-                    name='fontawesome|user'
-                    size={20}
-                    color='#e5004f'
-                    style={styles.ico}
-                  />
-                  <Text style={styles.itemText}>账户</Text>
-                </View>
-            </TouchableHighlight>
-
-            <TouchableHighlight underlayColor="#eee" onPress={()=>{
-
-            }}>
-                <View style={styles.menuItem}>
-                  <Icon
-                    name='fontawesome|star'
-                    size={20}
-                    color='#00a0e9'
-                    style={styles.ico}
-                  />
-                  <Text style={styles.itemText}>关于</Text>
-                </View>
-            </TouchableHighlight>
-
-            <TouchableHighlight underlayColor="#eee" onPress={()=>{
-              AsyncStorage.clear()
-                .then(()=>{
-                  this.props.nav.replace({ id: 'login' });
-                });
-            }}>
-                <View style={styles.menuItem}>
-                  <Icon
-                    name='fontawesome|sign-out'
-                    size={20}
-                    color='#eb6100'
-                    style={styles.ico}
-                  />
-                  <Text style={styles.itemText}>注销</Text>
-                </View>
-            </TouchableHighlight>
-
-          </ScrollView>
-
-        </View>
-      </View>
-    );
-  }
-});
+// 侧滑菜单组件
+var Menu = require("../Components/SideMenu");
 
 module.exports = React.createClass({
   firstRoute: {
     name: '所有笔记',
-    data: {update: false, goNoteBooks: false},
+    data: {update: false, goNoteBooks: false, atHome: true},
     component: AlLNoteList,
     leftCorner: SideBarButton,
     rightCorner: RefreshButton
@@ -175,7 +66,8 @@ module.exports = React.createClass({
     }
   },
   _gotoNoteBooks: function() {
-
+    firstRoute.data.atHome = true;
+    AlLNoteList.goToNoteList();
   },
   _siderbar: function() {
     this.refs["sideMenu"].openMenu();

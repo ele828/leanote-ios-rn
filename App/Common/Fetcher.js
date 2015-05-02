@@ -45,15 +45,14 @@ function getSyncNoteBooks() {
         getToken()
           .then(()=>{
             // 获取所有笔记本
-            var data = "?token=" + TOKEN + "&afterUsn=" + usn + "&maxEntry=" + 1000;
-            var syncNotebooksAddr = encodeURI(Api.SyncNotebooks + data);
+            var params = "?token=" + TOKEN + "&afterUsn=" + usn + "&maxEntry=" + 1000;
+            var syncNotebooksAddr = encodeURI(Api.SyncNotebooks + params);
 
             fetch(syncNotebooksAddr, {method:"GET"})
               .then((response) => response.json())
               // 获取增量更新列表
               .then((res) => {
                 var nums = res.length;
-
                 // 没有需要更新的内容
                 if(nums === 0) {
                     console.log("笔记本不需要更新");
@@ -61,7 +60,6 @@ function getSyncNoteBooks() {
                 }
 
                 var nbToBeDelete = [];
-
                 for(var i = 0; i < nums; i++) {
                   if(!res[i]["IsDeleted"]) {
                     var date = Tools.dateModifier(res[i]["UpdatedTime"]);
@@ -81,7 +79,6 @@ function getSyncNoteBooks() {
                     var newNotebooksArr = [];
                     if(oldNotebooks !== null) {
                       var oldNotebooksArr = JSON.parse(oldNotebooks);
-
                       // 替换旧的笔记数据
                       for(var i = 0; i < notebooks.length; i++) {
                         for(var j = 0; j < oldNotebooksArr.length; j++) {
@@ -91,7 +88,6 @@ function getSyncNoteBooks() {
                           }
                         }
                       }
-
                       // 清除本地已被删除的笔记本
                       for(var i = 0; i < nbToBeDelete.length; i++) {
                         for(var j = 0; j < oldNotebooksArr.length; j++) {
@@ -101,10 +97,7 @@ function getSyncNoteBooks() {
                           }
                         }
                       }
-
                       newNotebooksArr = notebooks.concat(oldNotebooksArr);
-                      //console.log("oldNotebooks::" + newNotebooksArr)
-
                     } else {
                       newNotebooksArr = notebooks;
                     }
@@ -118,10 +111,7 @@ function getSyncNoteBooks() {
                           AsyncStorage.setItem("Notebook:usn", newUsn);
                           resolve(newNotebooks);
                         });
-
                   })
-
-
               }).catch(()=>{
                 reject("network-error");
               })
@@ -152,34 +142,25 @@ function getSyncNotes() {
         getToken()
           .then(()=>{
             // 获取所有笔记
-            var data = "?token=" + TOKEN + "&afterUsn=" + usn + "&maxEntry=" + 1000;
-            var syncNotesAddr = encodeURI(Api.SyncNotes + data);
+            var params = "?token=" + TOKEN + "&afterUsn=" + usn + "&maxEntry=" + 1000;
+            var syncNotesAddr = encodeURI(Api.SyncNotes + params);
 
             fetch(syncNotesAddr, {method:"GET"})
               .then((response) => response.json())
               // 获取增量更新列表
               .then((res) => {
-
-                console.log("res::::" + res);
-
                 var nums = res.length;
-
-                console.log(res);
-
                 // 没有需要更新的内容
-                ////////////////
                 if(nums === 0) {
                     console.log("笔记不需要更新");
                     resolve();
                 }
-
                 // 更新笔记本
                 var noteToBedelete = [];
                 getSyncNoteBooks()
                   .then(()=>{
                     Storage.getAllNoteBooks()
                       .then((notebooks)=>{
-                          console.log("notebooks:::"+notebooks);
                           for(var i = 0; i < nums; i++) {
                             console.log(res[i]);
                               if(!res[i]["IsDeleted"] && !res[i]["IsTrash"]) {
@@ -209,11 +190,9 @@ function getSyncNotes() {
                             // 获取原先所有的数据
                             AsyncStorage.getItem("Note:all")
                               .then((oldNotes) => {
-
                                 var newNotesArr = [];
                                 if(oldNotes !== null) {
                                   var oldNotesArr = JSON.parse(oldNotes);
-
                                   // 替换旧的笔记数据
                                   for(var i = 0; i < notes.length; i++) {
                                     for(var j = 0; j < oldNotesArr.length; j++) {
@@ -223,7 +202,6 @@ function getSyncNotes() {
                                       }
                                     }
                                   }
-
                                   // 清除本地已被删除的笔记
                                   for(var i = 0; i < noteToBedelete.length; i++) {
                                     for(var j = 0; j < oldNotesArr.length; j++) {
@@ -233,13 +211,11 @@ function getSyncNotes() {
                                       }
                                     }
                                   }
-
                                   newNotesArr = notes.concat(oldNotesArr);
                                 } else {
                                   newNotesArr = notes;
                                 }
                                 return newNotesArr;
-
                               }).then((newNotesArr)=>{
                                 var newNotes = JSON.stringify(newNotesArr);
                                 // 储存到本地数据库中
@@ -252,10 +228,8 @@ function getSyncNotes() {
                                   });
                               })
 
-
                       }) // get all notebooks
                   }) // get sync note books
-
 
               })
               .catch(()=>{
@@ -269,5 +243,28 @@ function getSyncNotes() {
   });
 }
 
+// 获取笔记正文内容
+function getNoteContent(noteId) {
+  return new Promise((resolve, reject) => {
+    console.log("fetch note content");
+
+    getToken()
+      .then((token)=>{
+        // 获取所有笔记
+        var params = "?token=" + token + "&noteId=" + noteId;
+        var getNoteContentAddr = encodeURI(Api.NoteContent + params);
+
+        fetch(getNoteContentAddr, {method:"GET"})
+          .then((response) => response.json())
+          .then((res) => {
+            var content = res["Content"];
+            resolve(content);
+          })
+
+      });
+  });
+}
+
 exports.getSyncNotes     = getSyncNotes;
 exports.getSyncNoteBooks = getSyncNoteBooks;
+exports.getNoteContent   = getNoteContent;

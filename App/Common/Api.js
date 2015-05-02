@@ -8,7 +8,7 @@
 var BASE_ADDRESS = 'http://www.leanote.com/api';
 
 module.exports = {
-  
+
   // 登录
   Login: BASE_ADDRESS + '/auth/login',
 
@@ -20,5 +20,8 @@ module.exports = {
 
   // 获取增量同步的所有笔记
   SyncNotes: BASE_ADDRESS + '/note/getSyncNotes',
+
+  // 获得笔记内容
+  NoteContent: BASE_ADDRESS + '/note/getNoteContent',
 
 }

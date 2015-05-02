@@ -16,8 +16,8 @@ var Icon = require("react-native-icons");
 
 var Tweet = React.createClass({
 
-  goToTweet: function() {
-    this.props.goToTweet(this.props.note);
+  goToNote: function() {
+    this.props.goToNote(this.props.note);
   },
 
   render() {
@@ -25,7 +25,7 @@ var Tweet = React.createClass({
       note
     } = this.props;
     return (
-      <TouchableHighlight underlayColor="#eee" onPress={this.goToTweet}>
+      <TouchableHighlight underlayColor="#eee" onPress={this.goToNote}>
         <View style={styles.container}>
           <Text
             style={styles.noteText}
@@ -72,12 +72,12 @@ var styles = StyleSheet.create({
     fontSize: 14,
   },
   updateTime: {
-    marginTop: 2,
+    marginTop: 3,
     color: '#838383',
     fontSize: 12,
   },
   noteBook: {
-    marginTop: 2,
+    marginTop: 4,
     color: '#838383',
     fontSize: 12,
   },

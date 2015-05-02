@@ -34,6 +34,7 @@ var Router = require('react-native-router');
 var NoteCell = require('../Components/NoteCell');
 
 var ViewNote = require("./ViewNote");
+var AddNoteButton = require("../Components/AddNoteButton");
 
 var props = null;
 var AllNoteList = React.createClass({
@@ -88,15 +89,19 @@ var AllNoteList = React.createClass({
       })
   },
 
+  // 打开笔记详情页
   goToNote: function(note) {
+      this.props.data.atHome = false;
       this.props.toRoute({
         name: "我的笔记",
         component: ViewNote,
-        data: {note: note}
+        data: {note: note},
+        rightCorner: AddNoteButton
       });
   },
 
   goNoteBooks: function() {
+    this.props.data.atHome = false;
     this.props.toRoute({
       name: "我的笔记本",
       component: ViewNote,
@@ -127,7 +132,7 @@ var AllNoteList = React.createClass({
       this.msg = <View></View>;
     }
     var Notes = this.state.notes.map((note) => {
-      return <NoteCell note={note} goToTweet={this.goToNote} />;
+      return <NoteCell note={note} goToNote={this.goToNote} />;
     })
 
     return (
@@ -140,8 +145,7 @@ var AllNoteList = React.createClass({
             .then(()=>{
               this._loadNotesFromStorage();
             })
-        }
-        }>
+        }}>
           <View style={styles.plus}>
             <Icon
               name='fontawesome|plus'
