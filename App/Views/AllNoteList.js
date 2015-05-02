@@ -36,7 +36,6 @@ var NoteCell = require('../Components/NoteCell');
 var ViewNote = require("./ViewNote");
 
 var props = null;
-
 var AllNoteList = React.createClass({
   mixins: [TimerMixin],
 
@@ -133,7 +132,7 @@ var AllNoteList = React.createClass({
 
     return (
       <View style={styles.wrap}>
-        <ScrollView style={styles.container} ref="notesList"  onStartShouldSetResponder={()=>{console.log(111);return false;}}>
+        <ScrollView style={styles.container} ref="notesList">
           {Notes}
         </ScrollView>
         <TouchableOpacity activeOpacity="0.7" onPress={()=>{

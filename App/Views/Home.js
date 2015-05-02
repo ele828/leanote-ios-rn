@@ -121,10 +121,10 @@ var Menu = React.createClass({
             </TouchableHighlight>
 
             <TouchableHighlight underlayColor="#eee" onPress={()=>{
-              AsyncStorage.removeItem('User:token')
+              AsyncStorage.clear()
                 .then(()=>{
                   this.props.nav.replace({ id: 'login' });
-                })
+                });
             }}>
                 <View style={styles.menuItem}>
                   <Icon

@@ -17,7 +17,6 @@ var {
   TouchableOpacity
 } = React;
 
-
 var Api = require("../Common/Api");
 var Base = require("../Common/Base");
 var Spinner = require("../Components/Spinner");

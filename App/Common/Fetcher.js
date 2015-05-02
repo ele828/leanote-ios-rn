@@ -60,12 +60,16 @@ function getSyncNoteBooks() {
                     resolve("[]");
                 }
 
+                var nbToBeDelete = [];
+
                 for(var i = 0; i < nums; i++) {
                   if(!res[i]["IsDeleted"]) {
                     var date = Tools.dateModifier(res[i]["UpdatedTime"]);
                     var formatedDate = Tools.formatDate(date);
                     res[i]["UpdatedTime"] = formatedDate;
                     notebooks.push(res[i]);
+                  } else {
+                    nbToBeDelete.push(res[i]);
                   }
                 }
 
@@ -77,28 +81,39 @@ function getSyncNoteBooks() {
                     var newNotebooksArr = [];
                     if(oldNotebooks !== null) {
                       var oldNotebooksArr = JSON.parse(oldNotebooks);
+
                       // 替换旧的笔记数据
                       for(var i = 0; i < notebooks.length; i++) {
                         for(var j = 0; j < oldNotebooksArr.length; j++) {
-                          if(notebooks[i]["NotebookId"] == oldNotesArr[j]["NotebookId"]) {
+                          if(notebooks[i]["NotebookId"] == oldNotebooksArr[j]["NotebookId"]) {
                             oldNotebooksArr.splice(j, 1);
                             break;
                           }
                         }
                       }
+
+                      // 清除本地已被删除的笔记本
+                      for(var i = 0; i < nbToBeDelete.length; i++) {
+                        for(var j = 0; j < oldNotebooksArr.length; j++) {
+                          if(nbToBeDelete[i]["NotebookId"] == oldNotebooksArr[j]["NotebookId"]) {
+                            oldNotebooksArr.splice(j, 1);
+                            break;
+                          }
+                        }
+                      }
+
                       newNotebooksArr = notebooks.concat(oldNotebooksArr);
+                      //console.log("oldNotebooks::" + newNotebooksArr)
+
                     } else {
                       newNotebooksArr = notebooks;
                     }
                     return newNotebooksArr;
                   }).then((newNotebooksArr)=>{
-
                       var newNotebooks = JSON.stringify(newNotebooksArr);
-                      console.log(newNotebooks);
                       // 储存到本地数据库中
                       AsyncStorage.setItem("Notebook:all", newNotebooks)
                         .then(()=>{
-                          console.log(newUsn);
                           // 更新本地Usn
                           AsyncStorage.setItem("Notebook:usn", newUsn);
                           resolve(newNotebooks);
@@ -145,7 +160,11 @@ function getSyncNotes() {
               // 获取增量更新列表
               .then((res) => {
 
+                console.log("res::::" + res);
+
                 var nums = res.length;
+
+                console.log(res);
 
                 // 没有需要更新的内容
                 ////////////////
@@ -154,27 +173,21 @@ function getSyncNotes() {
                     resolve();
                 }
 
-                // getSyncNoteBooks()
-                //   .then((notebooks)=>{
-                //
-                //
-                //
-                //
-                //   }) /* getSyncNoteBooks */
-
                 // 更新笔记本
+                var noteToBedelete = [];
                 getSyncNoteBooks()
                   .then(()=>{
                     Storage.getAllNoteBooks()
                       .then((notebooks)=>{
-
+                          console.log("notebooks:::"+notebooks);
                           for(var i = 0; i < nums; i++) {
-                              if(!res[i]["IsDeleted"]) {
+                            console.log(res[i]);
+                              if(!res[i]["IsDeleted"] && !res[i]["IsTrash"]) {
                                 var date = Tools.dateModifier(res[i]["UpdatedTime"]);
                                 var formatedDate = Tools.formatDate(date);
                                 res[i]["UpdatedTime"] = formatedDate;
 
-                                //增加笔记本字段
+                                // 增加笔记本字段
                                 var nbs = JSON.parse(notebooks);
                                 if(nbs.length != 0) {
                                   nbs.forEach(function(notebook) {
@@ -186,6 +199,8 @@ function getSyncNotes() {
                                   res[i]["NotebookTitle"] = "默认分类";
                                 }
                                 notes.push(res[i]);
+                              } else {
+                                noteToBedelete.push(res[i]);
                               }
                             }
 
@@ -208,6 +223,17 @@ function getSyncNotes() {
                                       }
                                     }
                                   }
+
+                                  // 清除本地已被删除的笔记
+                                  for(var i = 0; i < noteToBedelete.length; i++) {
+                                    for(var j = 0; j < oldNotesArr.length; j++) {
+                                      if(noteToBedelete[i]["NoteId"] == oldNotesArr[j]["NoteId"]) {
+                                        oldNotesArr.splice(j, 1);
+                                        break;
+                                      }
+                                    }
+                                  }
+
                                   newNotesArr = notes.concat(oldNotesArr);
                                 } else {
                                   newNotesArr = notes;
@@ -229,9 +255,6 @@ function getSyncNotes() {
 
                       }) // get all notebooks
                   }) // get sync note books
-
-
-
 
 
               })
