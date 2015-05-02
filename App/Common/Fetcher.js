@@ -12,16 +12,17 @@ var {
 
 var Api = require("./Api");
 var Tools = require("./Tools");
+var Storage = require("./Storage");
 
-var TOKEN = "";
+var TOKEN = "";    // 请求使用的令牌
 
 function getToken() {
   return new Promise((resolve, reject) => {
-    if(TOKEN !== "") resolve();
+    if(TOKEN !== "") resolve(TOKEN);
     AsyncStorage.getItem("User:token")
       .then((token) => {
         TOKEN = token;
-        resolve();
+        resolve(TOKEN);
       })
       .catch(() => {
           reject();
@@ -42,57 +43,75 @@ function getSyncNoteBooks() {
         }
 
         getToken()
-        .then(()=>{
-          // 获取所有笔记本
-          var data = "?token=" + TOKEN + "&afterUsn=" + usn + "&maxEntry=" + 1000;
-          var syncNotebooksAddr = encodeURI(Api.SyncNotebooks + data);
+          .then(()=>{
+            // 获取所有笔记本
+            var data = "?token=" + TOKEN + "&afterUsn=" + usn + "&maxEntry=" + 1000;
+            var syncNotebooksAddr = encodeURI(Api.SyncNotebooks + data);
 
-          console.log(syncNotebooksAddr);
-          // fetch(syncNotebooksAddr, {method:"GET"})
-          //   .then((response) => response.json())
-          //   // 获取增量更新列表
-          //   .then((res) => {
-          //
-          //     var nums = res.length;
-          //
-          //     // 没有需要更新的内容
-          //     if(nums == 0) {
-          //         console.log("笔记本不需要更新");
-          //         resolve();
-          //     }
-          //
-          //     for(var i = 0; i < nums; i++) {
-          //       if(!res[i]["IsDeleted"]) {
-          //         var date = Tools.dateModifier(res[i]["UpdatedTime"]);
-          //         var formatedDate = Tools.formatDate(date, true);
-          //         res[i]["UpdatedTime"] = formatedDate;
-          //         notes.push(res[i]);
-          //       }
-          //     }
-          //     notes = notes.reverse();
-          //     // 获取原先所有的数据
-          //     AsyncStorage.getItem("Note:all")
-          //       .then((oldNotes) => {
-          //         var oldNotesArr = JSON.parse(oldNotes);
-          //         var newNotesArr = notes.concat(oldNotesArr);
-          //         var newNotes = JSON.stringify(newNotesArr);
-          //         // 储存到本地数据库中
-          //         AsyncStorage.setItem("Note:all", newNotes)
-          //           .then(()=>{
-          //             // console.log(notes[0]["Usn"]);
-          //             var newUsn = notes[0]["Usn"].toString();
-          //             // 更新本地Usn
-          //             AsyncStorage.setItem("Note:usn", newUsn);
-          //             resolve(newNotes);
-          //           });
-          //       });
-          //
-          //   })
-          //   .catch(()=>{
-          //     reject("network-error");
-          //   })
+            fetch(syncNotebooksAddr, {method:"GET"})
+              .then((response) => response.json())
+              // 获取增量更新列表
+              .then((res) => {
+                var nums = res.length;
 
-        }); /* getToken */
+                // 没有需要更新的内容
+                if(nums === 0) {
+                    console.log("笔记本不需要更新");
+                    resolve("[]");
+                }
+
+                for(var i = 0; i < nums; i++) {
+                  if(!res[i]["IsDeleted"]) {
+                    var date = Tools.dateModifier(res[i]["UpdatedTime"]);
+                    var formatedDate = Tools.formatDate(date);
+                    res[i]["UpdatedTime"] = formatedDate;
+                    notebooks.push(res[i]);
+                  }
+                }
+
+                notebooks = notebooks.reverse();
+                var newUsn = res[i-1]["Usn"].toString();
+                // 获取原先所有的数据
+                AsyncStorage.getItem("Notebook:all")
+                  .then((oldNotebooks) => {
+                    var newNotebooksArr = [];
+                    if(oldNotebooks !== null) {
+                      var oldNotebooksArr = JSON.parse(oldNotebooks);
+                      // 替换旧的笔记数据
+                      for(var i = 0; i < notebooks.length; i++) {
+                        for(var j = 0; j < oldNotebooksArr.length; j++) {
+                          if(notebooks[i]["NotebookId"] == oldNotesArr[j]["NotebookId"]) {
+                            oldNotebooksArr.splice(j, 1);
+                            break;
+                          }
+                        }
+                      }
+                      newNotebooksArr = notebooks.concat(oldNotebooksArr);
+                    } else {
+                      newNotebooksArr = notebooks;
+                    }
+                    return newNotebooksArr;
+                  }).then((newNotebooksArr)=>{
+
+                      var newNotebooks = JSON.stringify(newNotebooksArr);
+                      console.log(newNotebooks);
+                      // 储存到本地数据库中
+                      AsyncStorage.setItem("Notebook:all", newNotebooks)
+                        .then(()=>{
+                          console.log(newUsn);
+                          // 更新本地Usn
+                          AsyncStorage.setItem("Notebook:usn", newUsn);
+                          resolve(newNotebooks);
+                        });
+
+                  })
+
+
+              }).catch(()=>{
+                reject("network-error");
+              })
+
+          }); /* getToken */
 
     }) /* AsyncStorage */
 
@@ -100,19 +119,20 @@ function getSyncNoteBooks() {
   });
 }
 
+
 // 增量更新笔记本并同步到本地储存中
 function getSyncNotes() {
   return new Promise((resolve, reject) => {
     console.log("books fetcher");
     var notes = [];
+    var notebooks = [];
+
     AsyncStorage.getItem("Note:usn")
       .then((usn)=>{
         //第一次访问
         if(usn === null) {
           usn = 0;
         }
-
-        console.log(usn);
 
         getToken()
           .then(()=>{
@@ -128,51 +148,91 @@ function getSyncNotes() {
                 var nums = res.length;
 
                 // 没有需要更新的内容
-                if(nums == 0) {
+                ////////////////
+                if(nums === 0) {
                     console.log("笔记不需要更新");
                     resolve();
                 }
 
-                for(var i = 0; i < nums; i++) {
-                  if(!res[i]["IsDeleted"]) {
-                    var date = Tools.dateModifier(res[i]["UpdatedTime"]);
-                    var formatedDate = Tools.formatDate(date);
-                    res[i]["UpdatedTime"] = formatedDate;
-                    notes.push(res[i]);
-                  }
-                }
-                notes = notes.reverse();
-                // 获取原先所有的数据
-                AsyncStorage.getItem("Note:all")
-                  .then((oldNotes) => {
-                    var newNotesArr = [];
-                    if(oldNotes !== null) {
-                      var oldNotesArr = JSON.parse(oldNotes);
+                // getSyncNoteBooks()
+                //   .then((notebooks)=>{
+                //
+                //
+                //
+                //
+                //   }) /* getSyncNoteBooks */
 
-                      // 替换旧的笔记数据
-                      for(var i = 0; i < notes.length; i++) {
-                        for(var j = 0; j < oldNotesArr.length; j++) {
-                          if(notes[i]["NoteId"] == oldNotesArr[j]["NoteId"]) {
-                            oldNotesArr.splice(j, 1);
-                          }
-                        }
-                      }
-                      newNotesArr = notes.concat(oldNotesArr);
-                    } else {
-                      newNotesArr = notes;
-                    }
+                // 更新笔记本
+                getSyncNoteBooks()
+                  .then(()=>{
+                    Storage.getAllNoteBooks()
+                      .then((notebooks)=>{
 
-                    var newNotes = JSON.stringify(newNotesArr);
-                    // 储存到本地数据库中
-                    AsyncStorage.setItem("Note:all", newNotes)
-                      .then(()=>{
-                        // console.log(notes[0]["Usn"]);
-                        var newUsn = notes[0]["Usn"].toString();
-                        // 更新本地Usn
-                        AsyncStorage.setItem("Note:usn", newUsn);
-                        resolve(newNotes);
-                      });
-                  });
+                          for(var i = 0; i < nums; i++) {
+                              if(!res[i]["IsDeleted"]) {
+                                var date = Tools.dateModifier(res[i]["UpdatedTime"]);
+                                var formatedDate = Tools.formatDate(date);
+                                res[i]["UpdatedTime"] = formatedDate;
+
+                                //增加笔记本字段
+                                var nbs = JSON.parse(notebooks);
+                                if(nbs.length != 0) {
+                                  nbs.forEach(function(notebook) {
+                                    if(res[i]["NotebookId"] === notebook["NotebookId"]) {
+                                      res[i]["NotebookTitle"] = notebook["Title"];
+                                    }
+                                  });
+                                } else {
+                                  res[i]["NotebookTitle"] = "默认分类";
+                                }
+                                notes.push(res[i]);
+                              }
+                            }
+
+                            notes = notes.reverse();
+                            var newUsn = res[i-1]["Usn"].toString();
+                            // 获取原先所有的数据
+                            AsyncStorage.getItem("Note:all")
+                              .then((oldNotes) => {
+
+                                var newNotesArr = [];
+                                if(oldNotes !== null) {
+                                  var oldNotesArr = JSON.parse(oldNotes);
+
+                                  // 替换旧的笔记数据
+                                  for(var i = 0; i < notes.length; i++) {
+                                    for(var j = 0; j < oldNotesArr.length; j++) {
+                                      if(notes[i]["NoteId"] == oldNotesArr[j]["NoteId"]) {
+                                        oldNotesArr.splice(j, 1);
+                                        break;
+                                      }
+                                    }
+                                  }
+                                  newNotesArr = notes.concat(oldNotesArr);
+                                } else {
+                                  newNotesArr = notes;
+                                }
+                                return newNotesArr;
+
+                              }).then((newNotesArr)=>{
+                                var newNotes = JSON.stringify(newNotesArr);
+                                // 储存到本地数据库中
+                                AsyncStorage.setItem("Note:all", newNotes)
+                                  .then(()=>{
+                                    // 更新本地Usn
+                                    AsyncStorage.setItem("Note:usn", newUsn);
+                                    console.log("笔记更新成功！");
+                                    resolve(newNotes);
+                                  });
+                              })
+
+
+                      }) // get all notebooks
+                  }) // get sync note books
+
+
+
+
 
               })
               .catch(()=>{

@@ -38,7 +38,7 @@ var Tweet = React.createClass({
                 color='#ccc'
                 style={styles.bookIcon}
               />
-              <Text style={styles.noteBook}>{note["UpdatedTime"]}</Text>
+              <Text style={styles.noteBook}>{note["NotebookTitle"]}</Text>
               <Icon
                 name='fontawesome|clock-o'
                 size={13}

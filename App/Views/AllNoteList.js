@@ -54,7 +54,6 @@ var AllNoteList = React.createClass({
   },
 
   componentDidMount: function() {
-    //Fetcher.getSyncNoteBooks();
     // 从本地获取笔记
     this._loadNotesFromStorage();
     // 从网络更新笔记

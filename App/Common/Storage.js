@@ -9,7 +9,7 @@ var {
   AsyncStorage
 } = React;
 
-exports.getAllNotes = function() {
+function getAllNotes() {
   return new Promise((resolve, reject)=>{
     AsyncStorage.getItem('Note:all')
       .then((notes)=>{
@@ -21,7 +21,7 @@ exports.getAllNotes = function() {
   });
 }
 
-exports.getAllNoteBooks = function() {
+function getAllNoteBooks() {
   return new Promise((resolve, reject)=>{
     AsyncStorage.getItem('Notebook:all')
       .then((notebooks)=>{
@@ -32,3 +32,6 @@ exports.getAllNoteBooks = function() {
       });
   });
 }
+
+exports.getAllNoteBooks = getAllNoteBooks;
+exports.getAllNotes     = getAllNotes;
