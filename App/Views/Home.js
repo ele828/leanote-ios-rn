@@ -29,14 +29,29 @@ var AlLNoteList = require('./AllNoteList.js');
 var BackButton = require("../Components/BackButton");
 var SideBarButton = require("../Components/SideBarButton");
 var RefreshButton = require("../Components/RefreshButton");
+var CloseButton = require("../Components/CloseButton");
 
 var SideMenu = require('react-native-side-menu');
 var Icon = require("react-native-icons");
 
+// 动画组件
+var tweenState = require("react-tween-state");
+
 // 侧滑菜单组件
 var Menu = require("../Components/SideMenu");
 
+var test = React.createClass({
+  render() {
+    return (
+      <View>
+        <Text>测试滑动窗口</Text>
+      </View>
+    )
+  }
+});
+
 module.exports = React.createClass({
+  mixins: [tweenState.Mixin],
   firstRoute: {
     name: '所有笔记',
     data: {update: false, goNoteBooks: false, atHome: true},
@@ -44,14 +59,31 @@ module.exports = React.createClass({
     leftCorner: SideBarButton,
     rightCorner: RefreshButton
   },
+  fRoute: {
+    name: '关于',
+    data: {update: false, goNoteBooks: false, atHome: true},
+    component: test,
+    leftCorner: SideBarButton,
+    rightCorner: CloseButton
+  },
+  componentDidMount: function() {
+    if(this.getTweeningValue('top') > 0) {
+      this.tweenState('top', {
+        easing: tweenState.easingTypes.easeOutElastic,
+        duration: 800,
+        beginValue: Base.height,
+        endValue: Base.height
+      });
+    }
+  },
   getInitialState: function() {
     return {
       update: false,
-      menuOpened: false
+      menuOpened: false,
+      aboutOpened: false
     }
   },
   _handleAction: function(evt) {
-
     switch(evt.action) {
       case 'refresh':
         this._refreshNotes();
@@ -62,7 +94,38 @@ module.exports = React.createClass({
       case 'notebooks':
         this._gotoNoteBooks();
         break;
+      case 'showAbout':
+        this._showAbout();
+        break;
+      case 'hideAbout':
+        this._hideAbout();
+        break;
+    }
+  },
 
+  // 弹出关于窗口
+  _showAbout: function() {
+    if( !this.state.aboutOpened ) {
+      this.tweenState('top', {
+        easing: tweenState.easingTypes.easeOutElastic,
+        duration: 800,
+        beginValue: Base.height,
+        endValue: 0
+      });
+      this.setState({aboutOpened: true});
+    }
+  },
+  
+  // 关闭关于窗口
+  _hideAbout: function() {
+    if(this.state.aboutOpened) {
+      this.tweenState('top', {
+        easing: tweenState.easingTypes.easeInElastic,
+        duration: 800,
+        beginValue: 0,
+        endValue: Base.height
+      });
+      this.setState({aboutOpened: false});
     }
   },
   _gotoNoteBooks: function() {
@@ -79,7 +142,8 @@ module.exports = React.createClass({
   },
   render: function() {
     return (
-      <SideMenu menu={<Menu />} nav={this.props.navigator} ref="sideMenu">
+      <SideMenu menu={<Menu />} nav={this.props.navigator} customAction={this._handleAction} ref="sideMenu">
+      <View style={styles.container}>
         <View style={styles.container}>
           <Router ref="router"
             firstRoute={this.firstRoute}
@@ -87,6 +151,25 @@ module.exports = React.createClass({
             backButtonComponent={BackButton}
             customAction={this._handleAction}
           />
+        </View>
+          <View
+            style={{
+              position: 'absolute',
+              top: this.getTweeningValue('top'),
+              left:0,
+              width: Base.width,
+              height: Base.height,
+              backgroundColor: 'red',
+            }}
+          >
+          <Router ref="router"
+            firstRoute={this.fRoute}
+            headerStyle={styles.header}
+            backButtonComponent={BackButton}
+            customAction={this._handleAction}
+          />
+
+          </View>
         </View>
       </SideMenu>
     )

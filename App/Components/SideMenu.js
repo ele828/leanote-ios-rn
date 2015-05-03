@@ -30,6 +30,11 @@ var AllNoteList = require("../Views/AllNoteList");
 
 module.exports = React.createClass({
   mixins: [TimerMixin],
+  getInitialState: function() {
+    return {
+        aboutShowed: false,
+    }
+  },
   render: function() {
     return (
       <View>
@@ -52,6 +57,7 @@ module.exports = React.createClass({
 
           <ScrollView style={{paddingTop:10}}>
             <TouchableHighlight underlayColor="#eee" onPress={()=>{
+              this.props.customAction({action: 'hideAbout'});
               AllNoteList.goToNoteList();
               this.setTimeout(()=>{
                 this.props.menuActions.close();
@@ -69,10 +75,12 @@ module.exports = React.createClass({
             </TouchableHighlight>
 
             <TouchableHighlight underlayColor="#eee" onPress={()=>{
+
               AllNoteList.goToNote();
               this.setTimeout(()=>{
+                // this.props.customAction({action: 'hideAbout'});
                 this.props.menuActions.close();
-              }, 0);
+              }, 1);
             }}>
                 <View style={styles.menuItem}>
                   <Icon
@@ -100,7 +108,11 @@ module.exports = React.createClass({
             </TouchableHighlight>
 
             <TouchableHighlight underlayColor="#eee" onPress={()=>{
-
+              this.setState({aboutShowed: true});
+              this.setTimeout(()=>{
+                this.props.customAction({action: 'showAbout'})
+              }, 10);
+              this.props.menuActions.close();
             }}>
                 <View style={styles.menuItem}>
                   <Icon

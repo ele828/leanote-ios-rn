@@ -10,10 +10,10 @@ var {
 } = React;
 
 var TimerMixin = require('react-timer-mixin');
-var Base = require("../Common/Base");
-
-var Icon = require("react-native-icons");
 var tweenState = require("react-tween-state");
+
+var Base = require("../Common/Base");
+var Icon = require("react-native-icons");
 
 module.exports = React.createClass({
   mixins: [tweenState.Mixin, TimerMixin],
