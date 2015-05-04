@@ -37,6 +37,8 @@ var ViewNote = require("./ViewNote");
 var AddNoteButton = require("../Components/AddNoteButton");
 
 var props = null;
+var isAthome = true;
+
 var AllNoteList = React.createClass({
   mixins: [TimerMixin],
 
@@ -50,6 +52,10 @@ var AllNoteList = React.createClass({
 
     goToNoteList: function() {
       props.toTop();
+    },
+
+    isAtHomepage: function() {
+      return props.index === 0;
     }
   },
 
@@ -135,26 +141,28 @@ var AllNoteList = React.createClass({
       return <NoteCell note={note} goToNote={this.goToNote} />;
     })
 
+    global.test = 123;
+
     return (
       <View style={styles.wrap}>
         <ScrollView style={styles.container} ref="notesList">
           {Notes}
         </ScrollView>
-        <TouchableOpacity activeOpacity="0.7" onPress={()=>{
-          Fetcher.getSyncNotes()
-            .then(()=>{
-              this._loadNotesFromStorage();
-            })
-        }}>
-          <View style={styles.plus}>
-            <Icon
-              name='fontawesome|plus'
-              size={18}
-              color='#fff'
-              style={styles.plusIcon}
-            />
-          </View>
-        </TouchableOpacity>
+          <TouchableOpacity activeOpacity="0.7" onPress={()=>{
+            Fetcher.getSyncNotes()
+              .then(()=>{
+                this._loadNotesFromStorage();
+              })
+          }}>
+            <View style={styles.plus}>
+              <Icon
+                name='fontawesome|plus'
+                size={18}
+                color='#fff'
+                style={styles.plusIcon}
+              />
+            </View>
+          </TouchableOpacity>
         {this.msg}
       </View>
     );

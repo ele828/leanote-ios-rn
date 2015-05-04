@@ -9,8 +9,11 @@ var {
 } = React;
 
 var Icon = require("react-native-icons");
+var tweenState = require("react-tween-state");
+var TimerMixin = require('react-timer-mixin');
 
 module.exports = React.createClass({
+  mixins: [tweenState.Mixin, TimerMixin],
   getInitialState: function() {
     return {
       val: 0
@@ -20,6 +23,21 @@ module.exports = React.createClass({
     // console.log(this.getTweeningValue('rotation'));
     return (
       <TouchableOpacity activeOpacity="0.7" onPress={()=>{
+        this.tweenState('rotation', {
+          easing: tweenState.easingTypes.easeOutElastic,
+          duration: 1000,
+          beginValue: 0,
+          endValue: 0.3
+        });
+
+        this.setTimeout(()=>{
+          this.tweenState('rotation', {
+            easing: tweenState.easingTypes.easeOutElastic,
+            duration: 100,
+            beginValue: 0,
+            endValue: 0
+          });
+        },1001);
         this.props.customAction({action: "refresh"});
       }}>
           <Icon
@@ -30,6 +48,7 @@ module.exports = React.createClass({
               backgroundColor: 'transparent',
               width: 50,
               height: 50,
+              rotation: this.getTweeningValue('rotation'),
             }}
           />
       </TouchableOpacity>

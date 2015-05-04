@@ -29,7 +29,6 @@ module.exports = React.createClass({
     this.setState({isMarkdown : this.props.data.note["IsMarkdown"]});
     Fetcher.getNoteContent(this.props.data.note["NoteId"])
       .then((content) => {
-        console.log(content);
         this.setState({content: content});
       });
   },

@@ -13,7 +13,8 @@ var {
   Text,
   TextInput,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  StatusBarIOS
 } = React;
 
 // some Basic properties
@@ -99,10 +100,12 @@ module.exports = React.createClass({
     }
   },
   render: function() {
+    // 隐藏状态栏
+    StatusBarIOS.setStyle(1);
+
     var spinner = this.state.startReg ?
       ( <Spinner/> ) :
       ( <View/>);
-
     return (
       <View style={styles.container}>
       <Image source={require('image!lealogo')} style={styles.logo}/>

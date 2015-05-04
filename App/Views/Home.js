@@ -44,7 +44,7 @@ var test = React.createClass({
   render() {
     return (
       <View>
-        <Text>测试滑动窗口</Text>
+        <Text>我们是leanote笔记开发者</Text>
       </View>
     )
   }
@@ -58,13 +58,6 @@ module.exports = React.createClass({
     component: AlLNoteList,
     leftCorner: SideBarButton,
     rightCorner: RefreshButton
-  },
-  fRoute: {
-    name: '关于',
-    data: {update: false, goNoteBooks: false, atHome: true},
-    component: test,
-    leftCorner: SideBarButton,
-    rightCorner: CloseButton
   },
   componentDidMount: function() {
     if(this.getTweeningValue('top') > 0) {
@@ -83,6 +76,8 @@ module.exports = React.createClass({
       aboutOpened: false
     }
   },
+
+  // 处理从导航视图触发的动作
   _handleAction: function(evt) {
     switch(evt.action) {
       case 'refresh':
@@ -115,12 +110,12 @@ module.exports = React.createClass({
       this.setState({aboutOpened: true});
     }
   },
-  
+
   // 关闭关于窗口
   _hideAbout: function() {
     if(this.state.aboutOpened) {
       this.tweenState('top', {
-        easing: tweenState.easingTypes.easeInElastic,
+        easing: tweenState.easingTypes.easeInOutElastic,
         duration: 800,
         beginValue: 0,
         endValue: Base.height
@@ -162,12 +157,6 @@ module.exports = React.createClass({
               backgroundColor: 'red',
             }}
           >
-          <Router ref="router"
-            firstRoute={this.fRoute}
-            headerStyle={styles.header}
-            backButtonComponent={BackButton}
-            customAction={this._handleAction}
-          />
 
           </View>
         </View>
