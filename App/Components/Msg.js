@@ -19,16 +19,19 @@ module.exports = React.createClass({
   mixins: [tweenState.Mixin, TimerMixin],
   getInitialState: function() {
     return {
-      removed: false
+      removed: true
     }
   },
   componentDidMount: function() {
-    this.tweenState('top', {
-      easing: tweenState.easingTypes.linear,
-      duration: 700,
-      beginValue: -25,
-      endValue: 0
-    });
+    if(this.state.removed) {
+      this.setState({removed: false});
+      this.tweenState('top', {
+        easing: tweenState.easingTypes.linear,
+        duration: 700,
+        beginValue: -25,
+        endValue: 0
+      });
+    }
 
     this.setTimeout(()=>{
       this.tweenState('top', {

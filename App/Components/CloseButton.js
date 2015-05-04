@@ -39,7 +39,7 @@ module.exports = React.createClass({
           });
         },101);
 
-        this.props.customAction({action: "hideAbout"});
+        this.props.closeAbout();
       }}>
           <Icon
             name='fontawesome|close'

@@ -25,6 +25,7 @@ var Spinner = require("../Components/Spinner");
 
 var Router = require('react-native-router');
 var AlLNoteList = require('./AllNoteList.js');
+var About = require('./About');
 
 var BackButton = require("../Components/BackButton");
 var SideBarButton = require("../Components/SideBarButton");
@@ -40,15 +41,6 @@ var tweenState = require("react-tween-state");
 // 侧滑菜单组件
 var Menu = require("../Components/SideMenu");
 
-var test = React.createClass({
-  render() {
-    return (
-      <View>
-        <Text>我们是leanote笔记开发者</Text>
-      </View>
-    )
-  }
-});
 
 module.exports = React.createClass({
   mixins: [tweenState.Mixin],
@@ -62,7 +54,7 @@ module.exports = React.createClass({
   componentDidMount: function() {
     if(this.getTweeningValue('top') > 0) {
       this.tweenState('top', {
-        easing: tweenState.easingTypes.easeOutElastic,
+        easing: tweenState.easingTypes.linear,
         duration: 800,
         beginValue: Base.height,
         endValue: Base.height
@@ -154,10 +146,9 @@ module.exports = React.createClass({
               left:0,
               width: Base.width,
               height: Base.height,
-              backgroundColor: 'red',
             }}
           >
-
+            <About closeAbout={this._hideAbout} sideBar={this._siderbar}/>
           </View>
         </View>
       </SideMenu>

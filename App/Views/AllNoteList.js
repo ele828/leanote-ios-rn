@@ -141,8 +141,6 @@ var AllNoteList = React.createClass({
       return <NoteCell note={note} goToNote={this.goToNote} />;
     })
 
-    global.test = 123;
-
     return (
       <View style={styles.wrap}>
         <ScrollView style={styles.container} ref="notesList">

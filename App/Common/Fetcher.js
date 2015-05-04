@@ -16,6 +16,7 @@ var Storage = require("./Storage");
 
 var TOKEN = "";    // 请求使用的令牌
 
+// 获取用户token
 function getToken() {
   return new Promise((resolve, reject) => {
     if(TOKEN !== "") resolve(TOKEN);
@@ -30,6 +31,7 @@ function getToken() {
   })
 }
 
+// 获取增量笔记本并同步到本地储存中
 function getSyncNoteBooks() {
   return new Promise((resolve, reject)=>{
     console.log("notebooks fetcher");
@@ -125,7 +127,7 @@ function getSyncNoteBooks() {
 }
 
 
-// 增量更新笔记本并同步到本地储存中
+// 增量更新笔记并同步到本地储存中
 function getSyncNotes() {
   return new Promise((resolve, reject) => {
     console.log("books fetcher");

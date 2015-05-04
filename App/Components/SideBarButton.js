@@ -14,7 +14,11 @@ module.exports = React.createClass({
   render() {
     return (
       <TouchableOpacity activeOpacity="0.7" onPress={()=>{
-        this.props.customAction({action: 'sidebar'});
+        if(this.props.sideBar) {
+          this.props.sideBar();
+        } else {
+          this.props.customAction({action: 'sidebar'});
+        }
       }}>
           <Icon
             name='fontawesome|bars'
