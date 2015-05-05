@@ -41,12 +41,11 @@ var tweenState = require("react-tween-state");
 // 侧滑菜单组件
 var Menu = require("../Components/SideMenu");
 
-
 module.exports = React.createClass({
   mixins: [tweenState.Mixin],
   firstRoute: {
     name: '所有笔记',
-    data: {update: false, goNoteBooks: false, atHome: true},
+    data: {update: false, goNoteBooks: false, atHome: true, go: false},
     component: AlLNoteList,
     leftCorner: SideBarButton,
     rightCorner: RefreshButton
@@ -54,7 +53,7 @@ module.exports = React.createClass({
   componentDidMount: function() {
     if(this.getTweeningValue('top') > 0) {
       this.tweenState('top', {
-        easing: tweenState.easingTypes.linear,
+        easing: tweenState.easingTypes.easeOutElastic,
         duration: 800,
         beginValue: Base.height,
         endValue: Base.height
@@ -78,9 +77,6 @@ module.exports = React.createClass({
       case 'sidebar':
         this._siderbar();
         break;
-      case 'notebooks':
-        this._gotoNoteBooks();
-        break;
       case 'showAbout':
         this._showAbout();
         break;
@@ -89,7 +85,6 @@ module.exports = React.createClass({
         break;
     }
   },
-
   // 弹出关于窗口
   _showAbout: function() {
     if( !this.state.aboutOpened ) {
@@ -102,7 +97,6 @@ module.exports = React.createClass({
       this.setState({aboutOpened: true});
     }
   },
-
   // 关闭关于窗口
   _hideAbout: function() {
     if(this.state.aboutOpened) {
@@ -114,10 +108,6 @@ module.exports = React.createClass({
       });
       this.setState({aboutOpened: false});
     }
-  },
-  _gotoNoteBooks: function() {
-    firstRoute.data.atHome = true;
-    AlLNoteList.goToNoteList();
   },
   _siderbar: function() {
     this.refs["sideMenu"].openMenu();

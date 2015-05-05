@@ -15,10 +15,12 @@ var {
   TextInput,
   Image,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  ActivityIndicatorIOS
 } = React;
 
 var TimerMixin = require('react-timer-mixin');
+var tweenState = require("react-tween-state");
 
 var Api = require("../Common/Api");
 var Base = require("../Common/Base");
@@ -35,12 +37,14 @@ var NoteCell = require('../Components/NoteCell');
 
 var ViewNote = require("./ViewNote");
 var AddNoteButton = require("../Components/AddNoteButton");
+var AllNotebooks = require("./AllNotebooks");
+
+var SideBarButton = require("../Components/SideBarButton");
+var RefreshButton = require("../Components/RefreshButton");
 
 var props = null;
-var isAthome = true;
-
 var AllNoteList = React.createClass({
-  mixins: [TimerMixin],
+  mixins: [tweenState.Mixin, TimerMixin],
 
   statics: {
     goToNote: function() {
@@ -54,8 +58,13 @@ var AllNoteList = React.createClass({
       props.toTop();
     },
 
-    isAtHomepage: function() {
-      return props.index === 0;
+    goNoteBooks: function() {
+      props.toRoute({
+        name: "笔记本",
+        component: AllNotebooks,
+        leftCorner: SideBarButton,
+        rightCorner: RefreshButton
+      });
     }
   },
 
@@ -65,14 +74,23 @@ var AllNoteList = React.createClass({
     // 从网络更新笔记
     this._fetchSyncNotes();
     props = this.props;
+
+    this.refreshed = true;
+
+    this.tweenState('top', {
+      easing: tweenState.easingTypes.easeOutElastic,
+      duration: 800,
+      beginValue: Base.height - 50,
+      endValue: Base.height - 140
+    });
   },
 
   getInitialState: function() {
-    console.log('state');
     return {
       notes: [],
       notesLoaded: false,
-      fetchingNotes: false
+      fetchingNotes: false,
+      refreshing: false
     }
   },
 
@@ -92,12 +110,14 @@ var AllNoteList = React.createClass({
     Fetcher.getSyncNotes()
       .then(()=>{
         this._loadNotesFromStorage();
+        // 取消Indicator提示
+        this.refreshed = true;
       })
   },
 
   // 打开笔记详情页
   goToNote: function(note) {
-      this.props.data.atHome = false;
+      //this.props.data.atHome = false;
       this.props.toRoute({
         name: "我的笔记",
         component: ViewNote,
@@ -107,29 +127,43 @@ var AllNoteList = React.createClass({
   },
 
   goNoteBooks: function() {
-    this.props.data.atHome = false;
+    //this.props.data.atHome = false;
     this.props.toRoute({
       name: "我的笔记本",
       component: ViewNote,
     });
   },
 
+  gotoNewNote: function() {
+    this.tweenState('top', {
+      easing: tweenState.easingTypes.easeInElastic,
+      duration: 500,
+      beginValue: Base.height - 140,
+      endValue: Base.height - 50
+    });
+  },
+
   msg: <View></View>,
   render: function() {
+    var refreshIndicator = <View></View>;
     // 增量更新监听
     if(this.props.data.update === true) {
+      this.refreshed = false;
       this.state.fetchingNotes = true;
       this._fetchSyncNotes();
       this.props.data.update = false;
       this.setTimeout(()=>{
         this.setState({fetchingNotes: false});
-      },2200);
+      },1400);
     }
 
-    if(this.props.data.goNoteBooks === true) {
-      this.props.data.goNoteBooks = false;
-      this.goNoteBooks();
-      console.log("tetstste")
+    if(!this.refreshed) {
+      this.refreshed = false;
+      refreshIndicator = (
+        <ActivityIndicatorIOS
+          style={{marginTop: 30, marginBottom:10}}
+          size="small"
+        />);
     }
 
     if(this.state.fetchingNotes === true) {
@@ -137,22 +171,31 @@ var AllNoteList = React.createClass({
     } else {
       this.msg = <View></View>;
     }
-    var Notes = this.state.notes.map((note) => {
-      return <NoteCell note={note} goToNote={this.goToNote} />;
-    })
+    var Notes = <View></View>;
+
+    if(this.state.notes.length !== 0) {
+      Notes = this.state.notes.map((note) => {
+        return <NoteCell note={note} goToNote={this.goToNote} />;
+      });
+    }
 
     return (
       <View style={styles.wrap}>
-        <ScrollView style={styles.container} ref="notesList">
+        <ScrollView style={styles.container} ref="notesList"
+           scrollsToTop={true}
+           onScroll={(e)=>{
+              if (e.nativeEvent.contentOffset.y < -1) {
+                this.props.data.update=true;
+                this.refreshed = false;
+                this.setState({refreshing: true});
+              }
+           }}
+        >
+          {refreshIndicator}
           {Notes}
         </ScrollView>
-          <TouchableOpacity activeOpacity="0.7" onPress={()=>{
-            Fetcher.getSyncNotes()
-              .then(()=>{
-                this._loadNotesFromStorage();
-              })
-          }}>
-            <View style={styles.plus}>
+          <TouchableOpacity activeOpacity="0.7" onPress={this.gotoNewNote}>
+            <View style={[styles.plus,{top: this.getTweeningValue('top')}]}>
               <Icon
                 name='fontawesome|plus'
                 size={18}

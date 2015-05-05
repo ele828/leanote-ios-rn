@@ -20,7 +20,6 @@ module.exports = React.createClass({
     }
   },
   render() {
-    // console.log(this.getTweeningValue('rotation'));
     return (
       <TouchableOpacity activeOpacity="0.7" onPress={()=>{
         this.tweenState('rotation', {

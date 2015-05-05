@@ -75,12 +75,11 @@ module.exports = React.createClass({
             </TouchableHighlight>
 
             <TouchableHighlight underlayColor="#eee" onPress={()=>{
-
-              AllNoteList.goToNote();
+              this.props.customAction({action: 'hideAbout'});
+              AllNoteList.goNoteBooks();
               this.setTimeout(()=>{
-                // this.props.customAction({action: 'hideAbout'});
                 this.props.menuActions.close();
-              }, 1);
+              }, 20);
             }}>
                 <View style={styles.menuItem}>
                   <Icon

@@ -24,25 +24,23 @@ module.exports = React.createClass({
   },
   componentDidMount: function() {
     if(this.state.removed) {
-      this.setState({removed: false});
       this.tweenState('top', {
         easing: tweenState.easingTypes.linear,
-        duration: 700,
+        duration: 300,
         beginValue: -25,
         endValue: 0
       });
+      this.setTimeout(()=>{
+        this.tweenState('top', {
+          easing: tweenState.easingTypes.linear,
+          duration: 600,
+          beginValue: 0,
+          endValue: -25
+        });
+        this.setState({removed: true});
+      },800);
+      this.setState({removed: false});
     }
-
-    this.setTimeout(()=>{
-      this.tweenState('top', {
-        easing: tweenState.easingTypes.linear,
-        duration: 700,
-        beginValue: 0,
-        endValue: -25
-      });
-      this.setState({removed: true});
-    },1500);
-
   },
   render() {
     return (
