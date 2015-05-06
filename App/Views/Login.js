@@ -128,7 +128,7 @@ var LoginView = React.createClass({
   render: function() {
     // 隐藏状态栏
     StatusBarIOS.setStyle(1);
-    
+
     var spinner = this.state.startLogin ?
       ( <Spinner/> ) :
       ( <View/>);
