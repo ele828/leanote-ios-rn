@@ -18,8 +18,12 @@ var {
   ActivityIndicatorIOS
 } = React;
 
+var Base = require("../Common/Base");
+
 // 本地储存
 var Storage = require("../Common/Storage");
+
+var NoteCell = require('../Components/NoteCell');
 
 var ChildNoteList = React.createClass({
   componentDidMount() {
@@ -35,16 +39,30 @@ var ChildNoteList = React.createClass({
       notes: []
     }
   },
+
+  goToNote(){
+    
+  },
+
   render() {
-    var notes = this.state.notes.map((note) => {
-        return <Text>{note["Title"]}</Text>
-    });
+      var notes = this.state.notes.map((note) => {
+          return <NoteCell note={note} goToNote={this.goToNote} />;
+      });
         return (
-          <View>
-            {notes}
+          <View style={s.container}>
+            <ScrollView>
+              {notes}
+            </ScrollView>
           </View>
         )
     }
+});
+
+var s = StyleSheet.create({
+  container: {
+    height: Base.height-64,
+    backgroundColor: '#fff'
+  }
 });
 
 module.exports= ChildNoteList;

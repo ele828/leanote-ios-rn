@@ -17,6 +17,8 @@
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* leanoteTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* leanoteTests.m */; };
 		078262391AF524ED00E9F8F0 /* libAIBHTMLWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0782622B1AF524D800E9F8F0 /* libAIBHTMLWebView.a */; };
+		0782624F1AFB8EEE00E9F8F0 /* test.js in Resources */ = {isa = PBXBuildFile; fileRef = 0782624E1AFB8EEE00E9F8F0 /* test.js */; };
+		078262521AFB90E900E9F8F0 /* test.js in Sources */ = {isa = PBXBuildFile; fileRef = 0782624E1AFB8EEE00E9F8F0 /* test.js */; };
 		079952E31AF317D70090C3FF /* libReactNativeIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 079952D11AF3172B0090C3FF /* libReactNativeIcons.a */; };
 		079952E51AF318190090C3FF /* FontAwesome.otf in Resources */ = {isa = PBXBuildFile; fileRef = 079952E41AF318190090C3FF /* FontAwesome.otf */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
@@ -141,6 +143,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* leanoteTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = leanoteTests.m; sourceTree = "<group>"; };
 		078262251AF524D700E9F8F0 /* AIBHTMLWebView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AIBHTMLWebView.xcodeproj; path = "node_modules/react-native-html-webview/AIBHTMLWebView.xcodeproj"; sourceTree = "<group>"; };
+		0782624E1AFB8EEE00E9F8F0 /* test.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = test.js; path = ../test.js; sourceTree = "<group>"; };
 		079952C21AF3172A0090C3FF /* ReactNativeIcons.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeIcons.xcodeproj; path = "node_modules/react-native-icons/ios/ReactNativeIcons.xcodeproj"; sourceTree = "<group>"; };
 		079952E41AF318190090C3FF /* FontAwesome.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome.otf; path = "node_modules/react-native-icons/ios/ReactNativeIcons/Libraries/FontAwesomeKit/FontAwesome.otf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* leanote.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = leanote.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -277,6 +280,7 @@
 		13B07FAE1A68108700A75B9A /* leanote */ = {
 			isa = PBXGroup;
 			children = (
+				0782624E1AFB8EEE00E9F8F0 /* test.js */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -582,6 +586,7 @@
 			files = (
 				079952E51AF318190090C3FF /* FontAwesome.otf in Resources */,
 				008F07F31AC5B25A0029DE68 /* main.jsbundle in Resources */,
+				0782624F1AFB8EEE00E9F8F0 /* test.js in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -601,6 +606,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				078262521AFB90E900E9F8F0 /* test.js in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);

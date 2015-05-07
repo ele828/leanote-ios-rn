@@ -45,7 +45,6 @@ var RefreshButton = require("../Components/RefreshButton");
 var props = null;
 var AllNoteList = React.createClass({
   mixins: [tweenState.Mixin, TimerMixin],
-
   statics: {
     goToNote: function() {
       props.toRoute({
@@ -77,12 +76,15 @@ var AllNoteList = React.createClass({
 
     this.refreshed = true;
 
-    this.tweenState('top', {
-      easing: tweenState.easingTypes.easeOutElastic,
-      duration: 800,
-      beginValue: Base.height - 50,
-      endValue: Base.height - 140
-    });
+    // 弹出添加笔记小圆点
+    this.setTimeout(() => {
+      this.tweenState('top', {
+        easing: tweenState.easingTypes.easeOutElastic,
+        duration: 800,
+        beginValue: Base.height - 50,
+        endValue: Base.height - 140
+      });
+    }, 1000);
   },
 
   getInitialState: function() {

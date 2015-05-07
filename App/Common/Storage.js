@@ -39,12 +39,12 @@ function getNotesByNotebookId(notebookId) {
     AsyncStorage.getItem('Note:all')
         .then((notes) => {
           var ns = JSON.parse(notes);
-          ns.filter((note) => {
+          var noteList = ns.filter((note) => {
             if(note["NotebookId"] === notebookId) {
                return note;
             }
           });
-          resolve(ns);
+          resolve(noteList);
         });
   });
 }
