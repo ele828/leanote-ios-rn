@@ -16,12 +16,7 @@ var Fetcher = require("../Common/Fetcher");
 var HTMLWebView = require('react-native-html-webview');
 var Markdown = require('react-native-markdown');
 
-// 动画需要
-var TimerMixin = require('react-timer-mixin');
-var tweenState = require("react-tween-state");
-
 module.exports = React.createClass({
-  mixins: [tweenState.Mixin, TimerMixin],
   getInitialState() {
       return {
         isMarkdown: false,
@@ -92,49 +87,6 @@ module.exports = React.createClass({
           this.setState({content: html});
         }
       });
-
-    this.setTimeout(()=>{
-      this.tweenState('top', {
-        easing: tweenState.easingTypes.easeInElastic,
-        duration: 1000,
-        beginValue: -100,
-        endValue: 0
-      });
-    }, 10);
-  },
-
-  startY: 0,
-  _headerFolded: false,
-  _onScrollEnd(e) {
-
-    var lastY = e.nativeEvent.locationY;
-
-    if(lastY > this.startY) {
-      if(!this._headerFolded) {
-        this._headerFolded = true;
-        this.tweenState('top', {
-          easing: tweenState.easingTypes.linear,
-          duration: 400,
-          beginValue: 0,
-          endValue: -80
-        });
-      }
-
-    } else {
-      if(this._headerFolded) {
-        this._headerFolded = false;
-        this.tweenState('top', {
-          easing: tweenState.easingTypes.linear,
-          duration: 200,
-          beginValue: -80,
-          endValue: 0
-        });
-      }
-    }
-  },
-
-  _onScrollMove(e) {
-    this.startY= e.nativeEvent.locationY;
   },
 
   render() {
@@ -148,27 +100,22 @@ module.exports = React.createClass({
                       );
     return (
         <View style={styles.container}>
-          <View style={styles.contentView}
-         >
-            <ScrollView style={{position:'absolute', top: 0, height: Base.height-100, width: Base.width}}
-                onMoveShouldSetResponder={this._onScrollMove}
-                onResponderRelease={this._onScrollEnd}
-                onResponderTerminationRequest={()=>{return true;}}
-            >
+          <View style={styles.contentView}>
+            <ScrollView style={{position:'absolute', top: 0, height: Base.height-100, width: Base.width}}>
+              <View style={styles.header}>
+                  <Text style={styles.title}
+                    numberOfLines={1}
+                  >
+                    {this.props.data.note["Title"]}
+                  </Text>
+                  <Text style={styles.info}>
+                    笔记本：{this.props.data.note["NotebookTitle"]+"    "}
+                    时间：{this.props.data.note["UpdatedTime"]}
+                  </Text>
+                  <View style={styles.line}></View>
+              </View>
               {contentView}
             </ScrollView>
-            <View style={[styles.header, {position: 'absolute',top: this.getTweeningValue('top')}]}>
-                <Text style={styles.title}
-                  numberOfLines={1}
-                >
-                  {this.props.data.note["Title"]}
-                </Text>
-                <Text style={styles.info}>
-                  笔记本：{this.props.data.note["NotebookTitle"]+"    "}
-                  时间：{this.props.data.note["UpdatedTime"]}
-                </Text>
-                <View style={styles.line}></View>
-            </View>
           </View>
         </View>
     )
