@@ -103,36 +103,38 @@ module.exports = React.createClass({
     }, 10);
   },
 
-  _lastPosition: 0,
+  startY: 0,
   _headerFolded: false,
-  _onScroll(e) {
+  _onScrollEnd(e) {
 
-      var currentPostion = e.nativeEvent.contentOffset.y;
-      console.log(currentPostion - this._lastPosition);
-      if (currentPostion - this._lastPosition > 0 && !this._headerFolded) {
-            this._lastPosition = currentPostion;
-            if(!this._headerFolded) {
-              this._headerFolded = true;
-              this.tweenState('top', {
-                easing: tweenState.easingTypes.linear,
-                duration: 400,
-                beginValue: 0,
-                endValue: -80
-              });
-            }
-        } else if (this._lastPosition - currentPostion > 0 || (this._headerFolded && currentPostion - this._lastPosition > 0)) {
-            this._lastPosition = currentPostion;
-            if(this._headerFolded) {
-              this._headerFolded = false;
-              this.tweenState('top', {
-                easing: tweenState.easingTypes.linear,
-                duration: 400,
-                beginValue: -80,
-                endValue: 0
-              });
-            }
-        }
-    // console.log(offsetY);
+    var lastY = e.nativeEvent.locationY;
+
+    if(lastY > this.startY) {
+      if(!this._headerFolded) {
+        this._headerFolded = true;
+        this.tweenState('top', {
+          easing: tweenState.easingTypes.linear,
+          duration: 400,
+          beginValue: 0,
+          endValue: -80
+        });
+      }
+
+    } else {
+      if(this._headerFolded) {
+        this._headerFolded = false;
+        this.tweenState('top', {
+          easing: tweenState.easingTypes.linear,
+          duration: 200,
+          beginValue: -80,
+          endValue: 0
+        });
+      }
+    }
+  },
+
+  _onScrollMove(e) {
+    this.startY= e.nativeEvent.locationY;
   },
 
   render() {
@@ -146,8 +148,13 @@ module.exports = React.createClass({
                       );
     return (
         <View style={styles.container}>
-          <View style={styles.contentView}>
-            <ScrollView style={{position:'absolute', top: 0, height: Base.height-100, width: Base.width}} onScroll={this._onScroll}>
+          <View style={styles.contentView}
+         >
+            <ScrollView style={{position:'absolute', top: 0, height: Base.height-100, width: Base.width}}
+                onMoveShouldSetResponder={this._onScrollMove}
+                onResponderRelease={this._onScrollEnd}
+                onResponderTerminationRequest={()=>{return true;}}
+            >
               {contentView}
             </ScrollView>
             <View style={[styles.header, {position: 'absolute',top: this.getTweeningValue('top')}]}>
