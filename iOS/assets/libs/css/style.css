@@ -1,0 +1,106 @@
+*,
+body {
+    font-family: "lucida grande", "lucida sans unicode", lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+
+    font-size: 18px;
+}
+body {
+  width: 800px;
+  margin: auto;
+}
+h1,
+h2,
+h3 {
+  font-family: 'Open Sans', 'Helvetica Neue', Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', sans-serif;
+  font-weight: 300 !important;
+}
+a {
+  cursor: pointer;
+}
+a:hover {
+  text-decoration: none !important;
+}
+img {
+  max-width: 100%;
+}
+.each-post * {
+  line-height: 30px;
+}
+.each-post pre * {
+    font-size: 16px;
+    /*line-height: 24px;*/
+}
+h1 {
+  font-size: 24px;
+}
+h2 {
+  font-size: 22px;
+}
+h3 {
+  font-size: 20px;
+}
+h4 {
+  font-size: 16px;
+}
+
+/* posts */
+.title {
+  font-size: 24px;
+  text-align: center;
+}
+.md-content img, .md-content svg {
+  display: block;
+  margin: auto;
+}
+.each-post {
+  border-bottom: 1px solid #ebeff2;
+  margin-bottom: 10px;
+  padding: 30px;
+  padding-top: 10px;
+}
+.each-post .title {
+  font-size: 32px;
+  /*color: #0fb264;*/
+  font-weight: bold;
+  padding: 10px 0 15px 0;
+}
+.each-post .title a {
+  font-size: 32px;
+  font-weight: bold;
+  color: #000;
+  padding: 10px 0 15px 0;
+}
+.desc *, #content * {
+    word-wrap: break-word;
+}
+/* 表格 */
+
+table {
+    margin-bottom: 16px;
+}
+table th, table td {
+    padding: 6px 13px;
+    border: 1px solid #ddd;
+}
+table th {
+    font-weight: bold;
+}
+
+table tr {
+    background-color: none;
+    border-top: 1px solid #ccc;
+}
+table tr:nth-child(2n) {
+    background-color: rgb(247, 247, 249);
+}
+.mce-item-table, .mce-item-table td, .mce-item-table th, .mce-item-table caption {
+  border: 1px solid #ddd;
+  border-collapse: collapse;
+  padding: 6px 13px;
+}
+
+#md {
+  display: none;
+}

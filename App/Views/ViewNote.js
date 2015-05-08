@@ -34,10 +34,62 @@ module.exports = React.createClass({
     Fetcher.getNoteContent(this.props.data.note["NoteId"])
       .then((content) => {
         if(!this.state.isMarkdown) {
-          var html = content + "<script src=\"test.js\"></script><script>alert(a)</script>";
+          var html = `<!DOCTYPE html>
+                      <html>
+                      <title>Leanote html</title>
+                      <head>
+                      <link href="libs/css/bootstrap.css" rel="stylesheet">
+                      <link href="libs/css/style.css" rel="stylesheet">
+                      <body>
+                      <div class="each-post">` + content +
+                      `</div>
+                      <script src="libs/jquery-1.9.0.min.js"></script>
+                      <link href="libs/google-code-prettify/prettify.css" type="text/css" rel="stylesheet"/>
+                      <script src="libs/google-code-prettify/prettify.js"></script>
+                      <script>
+                        $("pre").addClass("prettyprint"); // linenums
+                        prettyPrint();
+                      </script>
+                      </body>
+                      </html>
+                      `;
           this.setState({content: html});
         } else {
-          this.setState({content: content});
+          var html = `<!DOCTYPE html>
+                      <html>
+                      <title>Leanote Markdown to Html Demo</title>
+                      <head>
+                      <link href="libs/css/bootstrap.css" rel="stylesheet">
+                      <link href="libs/css/style.css" rel="stylesheet">
+                      </head>
+
+                      <body>
+                      <div class="each-post">
+                      <h1 class="title">Welcome to Leanote!</h1>
+                      <div id="content" class="md-content"></div>
+
+                      <textarea id="md">` + content +
+                      ` </textarea>
+                        </div>
+
+                      <script src="libs/jquery-1.9.0.min.js"></script>
+                      <link href="libs/google-code-prettify/prettify.css" type="text/css" rel="stylesheet"/>
+                      <script src="libs/google-code-prettify/prettify.js"></script>
+                      <!-- markdown 开始 -->
+                      <script src="libs/markdown-to-html.js"></script>
+                      <script>
+                      markdownToHtml(document.getElementById('md').value,
+                        document.getElementById('content'),
+                        function(html) {
+                          $("pre").addClass("prettyprint"); // linenums
+                          prettyPrint();
+                      });
+                      </script>
+                      <!-- markdown 结束 -->
+                      </body>
+
+                      </html>`;
+          this.setState({content: html});
         }
       });
 
@@ -54,11 +106,7 @@ module.exports = React.createClass({
   _lastPosition: 0,
   _headerFolded: false,
   _onScroll(e) {
-    // if (e.nativeEvent.contentOffset.y < -1) {
-    //   this.props.data.update=true;
-    //   this.refreshed = false;
-    //   this.setState({refreshing: true});
-    // }
+
       var currentPostion = e.nativeEvent.contentOffset.y;
       console.log(currentPostion - this._lastPosition);
       if (currentPostion - this._lastPosition > 0 && !this._headerFolded) {
@@ -88,20 +136,14 @@ module.exports = React.createClass({
   },
 
   render() {
-    var contentView = this.state.isMarkdown
-                      ? (
-                        <Markdown>
-                          {this.state.content}
-                        </Markdown>
-                      )
-                      : (
+    var contentView = (
                         <HTMLWebView
                           style={{width: Base.width-10}}
                           html={this.state.content}
                           makeSafe={false}
                           autoHeight={true}
                           onLink={{}}/>
-                      )
+                      );
     return (
         <View style={styles.container}>
           <View style={styles.contentView}>

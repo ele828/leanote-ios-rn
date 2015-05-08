@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<title>Leanote Markdown to Html Demo</title>
+<head>
+<link href="libs/css/bootstrap.css" rel="stylesheet">
+<link href="libs/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="each-post">
+  <h1 class="title">Welcome to Leanote!</h1>
+  <div id="content" class="md-content"></div>
+  
+  <textarea id="md"># h1
+## h2
+### h3
+#### h4
+##### h4
+###### h5
+
+```javascript
+var PORT = 8000;
+var http = require('http');
+var server = http.createServer(function (request, response) {
+    // TODO
+});
+server.listen(PORT);
+console.log("Server runing at port: " + PORT + ".");
+```
+**strong text**
+Hey! I'm your first Markdown document in **Leanote**[^Leanote]. 
+
+
+Markdown Extra
+--------------------
+
+Leanote supports **Markdown Extra**, which extends **Markdown** syntax with some nice features.
+
+> **Tip:** You can disable any **Markdown Extra** feature in the **Extensions** tab of the <i class="icon-cog"></i> **Settings** dialog.
+
+> **Note:** You can find more information about **Markdown** syntax [here][2] and **Markdown Extra** extension [here][3].
+
+
+### Tables
+
+**Markdown Extra** has a special syntax for tables:
+
+Item     | Value
+-------- | ---
+Computer | $1600
+Phone    | $12
+Pipe     | $1
+
+You can specify column alignment with one or two colons:
+
+| Item     | Value | Qty   |
+| :------- | ----: | :---: |
+| Computer | $1600 |  5    |
+| Phone    | $12   |  12   |
+| Pipe     | $1    |  234  |
+
+
+### Definition Lists
+
+**Markdown Extra** has a special syntax for definition lists too:
+
+Term 1
+Term 2
+:   Definition A
+:   Definition B
+
+Term 3
+
+:   Definition C
+
+:   Definition D
+
+> part of definition D
+
+
+### Fenced code blocks
+
+GitHub's fenced code blocks are also supported with **Highlight.js** syntax highlighting:
+
+```
+// Foo
+var bar = 0;
+```
+
+> **Tip:** To use **Prettify** instead of **Highlight.js**, just configure the **Markdown Extra** extension in the <i class="icon-cog"></i> **Settings** dialog.
+
+> **Note:** You can find more information:
+
+> - about **Prettify** syntax highlighting [here][5],
+> - about **Highlight.js** syntax highlighting [here][6].
+
+
+### Footnotes
+
+You can create footnotes like this[^footnote].
+
+[^footnote]: Here is the *text* of the **footnote**.
+
+
+### SmartyPants
+
+SmartyPants converts ASCII punctuation characters into "smart" typographic punctuation HTML entities. For example:
+
+|                  | ASCII                        | HTML              |
+----------------- | ---------------------------- | ------------------
+| Single backticks | `'Isn't this fun?'`            | 'Isn't this fun?' |
+| Quotes           | `"Isn't this fun?"`            | "Isn't this fun?" |
+| Dashes           | `-- is en-dash, --- is em-dash` | -- is en-dash, --- is em-dash |
+
+
+### Table of contents
+
+You can insert a table of contents using the marker `[TOC]`:
+
+[TOC]
+
+
+### MathJax Latex
+
+$$
+\begin{eqnarray}
+\vec\nabla \times (\vec\nabla f) & = & 0  \cdots\cdots梯度场必是无旋场\\
+\vec\nabla \cdot(\vec\nabla \times \vec F) & = & 0\cdots\cdots旋度场必是无散场\\
+\vec\nabla \cdot (\vec\nabla f) & = & {\vec\nabla}^2f\\
+\vec\nabla \times(\vec\nabla \times \vec F) & = & \vec\nabla(\vec\nabla \cdot \vec F) - {\vec\nabla}^2 \vec F\\
+\end{eqnarray}
+$$
+
+--------------------------------
+
+$$
+\begin{array}{lll}
+  %最上面的一小行
+  \,\,\,微分形式 & &\,\,\,积分形式\\
+  %微分形式
+  \begin{cases}
+      \vec\nabla \times \vec H = \vec J + {\partial \vec D \over \partial \vec t} & (1)\\
+      \vec\nabla \times \vec E = -{\partial \vec B \over \partial t} & (2)\\
+      \vec\nabla \cdot \vec B = 0 & (3)\\
+      \vec\nabla \cdot \vec D = \rho & (4)
+  \end{cases}
+  &
+  %推导条件
+  \begin{array}[]{}
+      \underleftrightarrow{\iint_\vec S (\vec\nabla \times \vec F)d\vec S = \oint_\vec l \vec F \cdot d \vec l}\\
+      %下面的两行是为了空出来中间的位置
+      \,\\
+      \,\\
+      \underleftrightarrow{\iiint_\vec S \vec\nabla \cdot \vec Fd\vec V = \iint_\vec S \vec F \cdot d \vec S}\\ 
+      %实在是没有办法，不支持\oiint ,只能用\iint代替了，见谅
+  \end{array} 
+  &
+  %积分形式
+  \begin{cases}
+      \oint_\vec l \vec H \cdot d\vec l=-\int_\vec S (\vec J + {\partial \vec D \over \partial t} \cdot d\vec S) & (1)\\
+      \oint_\vec l \vec E \cdot d \vec l = - \int _ \vec S({\partial \vec B \over \partial \vec t})\cdot d \vec S & (2)\\
+      \int_\vec S \vec B\cdot d \vec S = 0& (3)\\
+      \int_\vec S \vec D \cdot d \vec S = Q&(4)
+  \end{cases}
+\end{array}
+$$
+
+
+$$E=mc^2$$
+
+$$(\sqrt{3x-1}+(1+x)^2)$$
+                  
+$$\sin(\alpha)^{\theta}=\sum_{i=0}^{n}(x^i + \cos(f))$$
+You can render *LaTeX* mathematical expressions using **MathJax**, as on [math.stackexchange.com][1]:
+
+The *Gamma function* satisfying $\Gamma(n) = (n-1)!\quad\forall n\in\mathbb N$ is via the Euler integral
+
+$$
+\Gamma(z) = \int_0^\infty t^{z-1}e^{-t}dt\,.
+$$
+
+> **Note:** You can find more information about **LaTeX** mathematical expressions [here][4].
+
+
+### UML diagrams
+
+You can also render sequence diagrams like this:
+
+```sequence
+Alice->Bob: Hello Bob, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am good thanks!
+```
+
+And flow charts like this:
+
+```flow
+st=>start: Start
+e=>end
+op=>operation: My Operation
+cond=>condition: Yes or No?
+
+st->op->cond
+cond(yes)->e
+cond(no)->op
+```
+
+> **Note:** You can find more information:
+
+> - about **Sequence diagrams** syntax [here][7],
+> - about **Flow charts** syntax [here][8].
+
+### Support Leanote
+
+Alipay Donation:
+
+![leantoe donation](http://leanote.org/images/leanote/leanote_alipay.jpg)
+
+
+[^Leanote]: [Leanote](https://stackedit.io/) is a full-featured, open-source Markdown editor based on PageDown, the Markdown library used by Stack Overflow and the other Stack Exchange sites.
+
+
+[1]: http://math.stackexchange.com/
+[2]: http://daringfireball.net/projects/markdown/syntax "Markdown"
+[3]: https://github.com/jmcmanus/pagedown-extra "Pagedown Extra"
+[4]: http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference*emphasized text*
+[5]: https://code.google.com/p/google-code-prettify/
+[6]: http://highlightjs.org/
+[7]: http://bramp.github.io/js-sequence-diagrams/
+[8]: http://adrai.github.io/flowchart.js/
+  </textarea>
+</div>
+
+<script src="libs/jquery-1.9.0.min.js"></script>
+<link href="libs/google-code-prettify/prettify.css" type="text/css" rel="stylesheet"/>
+<script src="libs/google-code-prettify/prettify.js"></script>
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<!-- markdown 开始 -->
+<script src="libs/markdown-to-html.js"></script>
+<script>
+markdownToHtml(document.getElementById('md').value, 
+  document.getElementById('content'), 
+  function(html) {
+    $("pre").addClass("prettyprint"); // linenums
+    prettyPrint();
+});
+</script>
+<!-- markdown 结束 -->
+</body>
+
+</html>
