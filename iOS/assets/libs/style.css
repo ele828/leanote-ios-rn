@@ -1,12 +1,12 @@
-#posts img {
+#posts img, #posts table {
   max-width: 100%;
 }
 #content *, .desc * {
-  font-size: 18px;
+  font-size: 14px;
   line-height: 30px;
 }
 .desc pre * {
-    font-size: 16px;
+    font-size: 14px;
     /*line-height: 24px;*/
 }
 #content h1, .desc h1 {
@@ -385,7 +385,7 @@ a:hover {
 }
 /* posts */
 #posts {
-  width: 800px;
+  width: 100%;
 }
 #posts .each-post {
   border-bottom: 1px solid #ebeff2;
