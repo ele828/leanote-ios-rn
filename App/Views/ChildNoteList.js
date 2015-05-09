@@ -23,7 +23,9 @@ var Base = require("../Common/Base");
 // 本地储存
 var Storage = require("../Common/Storage");
 
+var ViewNote = require("./ViewNote");
 var NoteCell = require('../Components/NoteCell');
+var AddNoteButton = require("../Components/AddNoteButton");
 
 var ChildNoteList = React.createClass({
   componentDidMount() {
@@ -40,8 +42,13 @@ var ChildNoteList = React.createClass({
     }
   },
 
-  goToNote(){
-    
+  goToNote(note){
+    this.props.toRoute({
+      name: "我的笔记",
+      component: ViewNote,
+      data: {note: note},
+      rightCorner: AddNoteButton
+    });
   },
 
   render() {

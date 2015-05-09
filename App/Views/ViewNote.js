@@ -29,6 +29,7 @@ module.exports = React.createClass({
     Fetcher.getNoteContent(this.props.data.note["NoteId"])
       .then((content) => {
         if(!this.state.isMarkdown) {
+          
           var html = `<!DOCTYPE html>
                       <html>
                       <title>Leanote html</title>
@@ -101,7 +102,7 @@ module.exports = React.createClass({
     return (
         <View style={styles.container}>
           <View style={styles.contentView}>
-            <ScrollView style={{position:'absolute', top: 0, height: Base.height-100, width: Base.width}}>
+            <ScrollView style={{position:'absolute', top: 0, height: Base.height-60, width: Base.width}}>
               <View style={styles.header}>
                   <Text style={styles.title}
                     numberOfLines={1}

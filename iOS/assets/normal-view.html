@@ -1,12 +1,319 @@
 <!DOCTYPE html>
 <html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 <title>Leanote Html Demo</title>
 <head>
 <link href="libs/css/bootstrap.css" rel="stylesheet">
 <link href="libs/css/style.css" rel="stylesheet">
 <body>
 <div class="container">
+	<div class="row">
+		<div class="col-xs-12">
+			<p><strong><a class="op-bk-polysemy-album op-se-listen-recommend" href="http://www.baidu.com/link?url=cOsksrNOFtHgG5gGOUwGLVA1UNjJMaE_O9AxNdOUfhUYqzd2fI6r_cGtWt3dsNkbcAqFkNUZbIgpyCJTCpwebK" target="_blank" data-mce-href="http://www.baidu.com/link?url=cOsksrNOFtHgG5gGOUwGLVA1UNjJMaE_O9AxNdOUfhUYqzd2fI6r_cGtWt3dsNkbcAqFkNUZbIgpyCJTCpwebK"><img class="c-img c-img6" src="https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=2775651185,1661377839&amp;fm=58" alt="" data-mce-src="https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=2775651185,1661377839&amp;fm=58"></a></strong></p><p><strong><br data-mce-bogus="1"></strong></p><p><strong>本文同步自我的&nbsp;<a href="https://github.com/classicemi/blog/issues/11" data-mce-href="https://github.com/classicemi/blog/issues/11">GitHub</a></strong></p><p>过去，在文曲星等各种电子词典中，经常会有一个叫做猜单词的游戏。给定一个单词，告诉你这个单词有几个字母，然后你去猜。输入一个字母，如果单词中包含这个字母，则将单词中所有的这个字母都显示出来，如果猜错，则扣生命值，在生命值扣光之前全部猜对则为胜利。</p><p>过去我很喜欢玩这个游戏，因为它能让背单词显得不那么枯燥乏味，也能提高自己对单词构词规律的认识。但是这篇文章要说的，不是怎么去玩好这个游戏，而是怎么借助程序的力量去自动破解猜单词的难题。</p><h2>背景</h2><p>假设现在存在这样的一个接口<code class=" language-javascript">http<span class="token punctuation">:</span><span class="token operator">/</span><span class="token operator">/</span>hangman<span class="token punctuation">.</span>com<span class="token operator">/</span>game<span class="token operator">/</span>on</code>，它可以接受 post 请求，合法的请求共有四种。第一种是开始游戏，发送这样的数据可以重新开始一次新的游戏：</p><pre class=" language-javascript">{
+    "playerId": "classicemi",
+    "action": "startGame"
+}</pre><p>服务器会返回如下信息：</p><pre class=" language-javascript">{
+    "message": "THE GAME IS ON",
+    "sessionId": "xxxx",
+    "data": {
+        "numberOfWordsToGuess": 80,
+        "numberOfGuessAllowedForEachWord": 10
+    }
+}</pre><p>它告诉用户游戏已经开始，共有 80 个单词要猜，每个单词有十次猜错的机会。</p><p>用户还可以发送下一个单词的请求：</p><pre class=" language-javascript">{
+    "sessionId": "xxxx", //这是开始游戏时服务器返回的sessionId，用于识别用户
+    "action": "nextWord"
+}</pre><p>服务器的返回信息如下：</p><pre class=" language-javascript">{
+    "sessionId": "xxxx",
+    "data": {
+        "word": "*****",
+        "totalWordCount": 1,
+        "wrongGuessCountOfCurrentWord": 0
+    }
+}</pre><p>从这样的信息中可以知道，要猜的单词由 5 个字母组成，以及现在猜错了几次（当然现在是 0 次）。</p><p>要进行猜测的话，则发送如下请求：</p><pre class=" language-javascript">{
+    "sessionId": "xxxx",
+    "action": "guessWord",
+    "guess": "t" //举个栗子
+}</pre><p>如果猜测正确，服务器会返回如下数据:</p><pre class=" language-javascript">{
+    "sessionId": "xxxx",
+    "data": {
+        "word": "***S*",
+        "totalWordCount": 1,
+        "wrongGuessCountOfCurrentWord": 0
+    }
+}</pre><p>如果猜错了，则返回如下数据：</p><pre class=" language-javascript">{
+    "sessionId": "xxxx",
+    "data": {
+        "word": "*****",
+        "totalWordCount": 1,
+        "wrongGuessCountOfCurrentWord": 1
+    }
+}</pre><p>如果猜错超过十次还继续猜，则会返回如下信息：</p><pre class=" language-javascript">{
+    "message": "No more guess left."
+}</pre><p>这时，只能选择跳转至下一个单词了，即再次发送<code class=" language-javascript">nextWord</code>请求。当用户猜完了 80 个词（当然也可以是任何时候），用户可以选择提交成绩结束游戏，只要发送如下请求：</p><pre class=" language-javascript">{
+    "sessionId": "xxxx",
+    "action" : "submitResult"
+}</pre><p>服务器返回最终完成的信息：</p><pre class=" language-javascript">{
+    "message": "GAME OVER",
+    "sessionId": "xxxx",
+    "data": {
+        "playerId": "classicemi",
+         "sessionId": "xxxx",
+        "totalWordCount": 80,
+        "correctWordCount": 77,
+        "totalWrongGuessCount": 233,
+        "score": 1307,
+        "datetime": "2014-10-28 11:45:58"
+    }
+}</pre><p>同时，在游戏过程中，用户可以随时查看当前已有的成绩，发送请求如下：</p><pre class=" language-javascript">{
+    "sessionId": "xxxx",
+    "action" : "getResult"
+}</pre><p>返回信息如下：</p><pre class=" language-javascript">{
+    "sessionId": "xxxx",
+    "data": {
+        "totalWordCount": 40,
+        "correctWordCount": 20,
+        "totalWrongGuessCount": 100,
+        "score": 300
+    }
+}</pre><p>OK，关于接口已经介绍完了，下面就来玩这个游戏吧。</p><h2>思考</h2><p>首先，由于我们要实现一个全自动的程序，不能借助人的力量，也就是说，用户的单词量的多少根本派不上用场。如果这个单词只是一个随机字符串的话，问题倒也简单了，随机猜字母即可。但是现在已经明确是英语单词，虽然比起随机字符串，范围大大缩小，但是要准确去猜英语单词，随机猜字母肯定是行不通了。</p><p>既不能借助用户的单词量，又不能使用随机字母，那么我们就需要一个样本总量足够大的单词表作为我们的数据库。在 UNIX 系统中，<code class=" language-javascript"><span class="token operator">/</span>usr<span class="token operator">/</span>share<span class="token operator">/</span>dict</code>目录中，有一个<code class=" language-javascript">words</code>文件，用 vim 打开看一下，发现里面有 20 多万个单词，这就是一个现成的单词数据库。不过根据后来的测试结果来看，20多万的单词量玩这个游戏还是有点不够，所以，还是去找开源的单词列表数据吧，最后我找到一个 65w 单词量的文件，正确率就比较高了。</p><h3>流程</h3><p>有了大量的单词数据，只是打好了基础，就像张无忌练了九阳神功，内力充沛，但是没有招式还是不行，充其量只是打不死，在这里我们需要的招式则是一个科学的算法。</p><p>不过在实现算法之前，先来把自动化程序的骨架搭起来，使流程控制能够跑通。我使用的是 Node.js 来执行程序，依赖的模块有两个，分别是<code class=" language-javascript">inquirer</code>和<code class=" language-javascript">request</code>。前者用来构建交互式的命令行程序，便于必要时接受用户的指令；后者用来方便地发送 post 请求。</p><p>程序的流程图如下：</p><pre class=" language-javascript">                  +-------+                                    
+                  | start |                                    
+                  +---+---+                                    
+                      |                                        
+                      v                                        
+            +---------+-----------+               +-----------+
+       +---&gt;+ flow control center | &lt;-------------+ next word |
+       |    +---------+-----------+               +-------+---+
+       |              |                                   ^    
+       |        is the|guess finished?                    |no  
+       |              |              is the game finished?|    
+get the|result        +--------+yes+----------------------+    
+       |              |no                              yes|    
+       |              v                                   v    
+       |       +------+-------+                      +----+---+
+       +-------+ make a guess |                      | submit |
+               +--------------+                      +--------+</pre><p>根据流程图可以知道，我们需要几个函数来实现这个流程，图中的一个方块就对应一个函数，首先是流程的入口，程序最开始也是调用这个方法：</p><pre class=" language-javascript">function startGame() {
+    inquirer.prompt(
+        [{
+            type: "input",
+            name: "startGame",
+            message: "please enter 'y' to automatically play the game, or enter session id to continue: "
+        }], function(answers) {
+            if (answers.startGame.toLowerCase() != 'y') {
+                sessionId = answers.startGame;
+                nextWord();
+                return;
+            }
+            setTimeout(function() {
+                auto('start');
+            }, 0);
+        }
+    );
+}</pre><p>这里面有一个 if 语句用来接受用户直接输入<code class=" language-javascript">sessionId</code>的情况，这是为了处理一旦网络中断或是程序异常的情况，便于用户直接输入<code class=" language-javascript">sessionId</code>来接着上次的进度继续执行。可以看到其中调用了<code class=" language-javascript">auto</code>方法，这个<code class=" language-javascript">auto</code>方法则是流程图中的&nbsp;<strong>flow control center</strong>，它会根据传入的参数来决定下一步去调用哪个方法(函数中的一些变量的作用后面会作解释)：</p><pre class=" language-javascript">function auto(data, letterToGuess) {
+    if (data == 'start') {
+        options.body = {
+            "playerId": playerId,
+            "action": "startGame"
+        };
+        request(options, function(err, res, data) {
+            if (!err &amp;&amp; res.statusCode == 200) {
+                console.log(data)
+                console.log('game restarted，your sessionId is: ', data.sessionId);
+                sessionId = data.sessionId;
+                setTimeout(function() {
+                    auto(data);
+                }, 0);
+            } else {
+                console.log(err);
+            }
+        });
+        return;
+    }
+    // game start
+    if (data.message &amp;&amp; data.message == 'THE GAME IS ON') {
+        sessionId = data.sessionId;
+        setTimeout(nextWord, 0);
+        return;
+    }
+    if (data.message &amp;&amp; data.message == 'No more word to guess.') {
+        setTimeout(getResult, 0);
+        return;
+    }
+    // unfinished situation
+    if (data.data.word.indexOf('*') &gt; -1
+            &amp;&amp; data.data.wrongGuessCountOfCurrentWord &lt; 10
+            &amp;&amp; data.data.totalWordCount &lt;= 80) {
+        setTimeout(function() {
+            guess(data.data.word, data.data.wrongGuessCountOfCurrentWord, letterToGuess);
+        }, 0);
+    } else if (data.data.word.indexOf('*') == -1
+            || data.data.wrongGuessCountOfCurrentWord &gt;= 10) { // guess finished
+        // 猜词完毕后，复原辅助变量
+        wordsMatchLength = [];
+        letterFrequency = {};
+        wrongNum = 0;
+        lettersGuessed = '';
+        setTimeout(nextWord, 0);
+    } else if (data.data.totalWordCount &gt;= 80 &amp;&amp; data.data.wrongGuessCountOfCurrentWord &gt;= 10) {
+        setTimeout(getResult, 0);
+    }
+}</pre><p>接下来是实现<code class=" language-javascript">nextWord</code>功能和<code class=" language-javascript">guessWord</code>功能的函数：</p><pre class=" language-javascript">function nextWord() {
+    options.body = {
+        "sessionId": sessionId,
+        "action": "nextWord"
+    };
+    request(options, function(err, res, data) {
+        if (err) {
+            console.log(err);
+        } else if(data.message) {
+            console.log(data.message);
+        } else {
+            console.log('current word: ', data.data.word);
+            console.log('current word count: ', data.data.totalWordCount);
+            console.log('wrong guess: ', data.data.wrongGuessCountOfCurrentWord + ' times');
+            index = 0;
+        }
+        auto(data);
+    });
+}
 
+function guess(word, wrongNum, letter) {
+    var letterToGuess = filter(word, wrongNum, letter);
+    options.body = {
+        "sessionId": sessionId,
+        "action": "guessWord",
+        "guess": letterToGuess.toUpperCase()
+    };
+    request(options, function(err, res, data) {
+        if (err) {
+            console.log(err);
+        } else if(data.message) {
+            console.log(message);
+        } else {
+            console.log('your guess: ', letterToGuess.toUpperCase());
+            console.log('current word: ', data.data.word);
+            console.log('current word count: ', data.data.totalWordCount);
+            console.log('wrong guess: ', data.data.wrongGuessCountOfCurrentWord + ' times');
+        }
+        setTimeout(function() {
+            auto(data, letterToGuess);
+        }, 0);
+    });
+}</pre><p>最后是获取成绩和提交成绩的方法：</p><pre class=" language-javascript">function getResult() {
+    options.body = {
+        "sessionId": sessionId,
+        "action": "getResult"
+    };
+    function submitDicide() {
+        inquirer.prompt(
+            [{
+                type: "input",
+                name: "submitDicision",
+                message: "enter 'y' to submit your score or enter 'n' to restart: "
+            }], function(answers) {
+                if (answers.submitDicision.toLowerCase() != 'y' &amp;&amp; answers.submitDicision.toLowerCase() != 'n') {
+                    console.log('illegal command, please reenter: ');
+                    submitDicide();
+                    return;
+                }
+                switch (answers.submitDicision.toLowerCase()) {
+                    case 'y':
+                        submit();
+                        break;
+                    case 'n':
+                        startGame();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        );
+    }
+    request(options, function(err, res, data) {
+        if (err) {
+            console.log(err);
+        } else if(data.message) {
+            console.log(message);
+        } else {
+            console.log(data);
+            console.log('current word: ', data.data.word);
+            console.log('current word count: ', data.data.totalWordCount);
+            console.log('wrong guess: ', data.data.wrongGuessCountOfCurrentWord + ' times');
+            console.log('current score: ', data.data.score);
+            submitDicide();
+        }
+    });
+}
+
+function submit() {
+    options.body = {
+        "sessionId": sessionId,
+        "action": "submitResult"
+    };
+    request(options, function(err, res, data) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log('player: ', data.data.playerId);
+            console.log('session id: ', data.data.sessionId);
+            console.log('total word count: ', data.data.totalWordCount);
+            console.log('correct word count: ', data.data.correctWordCount);
+            console.log('total wrong guess count: ', data.data.totalWrongGuessCount);
+            console.log('total score: ', data.data.score);
+            console.log('submit time: ', data.data.datetime);
+        }
+    });
+}</pre><p>由于整个程序的方法之间会一直相互调用，为了防止调用栈过深，所有的调用都用<code class=" language-javascript">setTimeout</code>改成了异步的方式。</p><h3>算法</h3><p>与自动化流程相关的函数都已经准备好了，接下来需要实现的就是算法了。说是算法，其实就是充分利用已有的信息对词典进行筛选的过程，首先要对现有的词典文件进行一些预处理的工作，这些工作在执行程序的一开始就会完成：</p><pre class=" language-javascript">// 同步方式读取字典文件
+var dict = fs.readFileSync('words.txt', 'utf-8');
+// 获得保存所有单词的数组
+var wordArr = dict.split('\r\n');</pre><p>接下来就是核心函数<code class=" language-javascript">filter</code>，它位于<code class=" language-javascript">guess</code>方法中，用来分析数据，返回接下来应该猜哪个字母，它的工作流程如下：</p><p>第一次调用时，根据要猜单词的长度遍历数组<code class=" language-javascript">wordArr</code>，筛选出长度符合条件的单词并<code class=" language-javascript">push</code>到<code class=" language-javascript">wordsMatchLength</code>数组中：</p><pre class=" language-javascript">if (!wordsMatchLength.length) {
+    for (var i = 0, len = wordArr.length; i &lt; len; i++) {
+        if (wordArr[i].length === word.length) {
+            wordsMatchLength.push(wordArr[i]);
+        }
+    }
+}</pre><p>对<code class=" language-javascript">wordsMatchLength</code>数组进行双循环遍历，借助一个空对象<code class=" language-javascript">letterFrequency</code>，选出这些单词中出现频率最高的字母，并返回。</p><pre class=" language-javascript">for (var i = 0, len = wordsMatchLength.length; i &lt; len; i++) {
+    for (var j = 0, innerLen = wordsMatchLength[i].length; j &lt; innerLen; j++) {
+        letterFrequency[wordsMatchLength[i][j].toLowerCase()] == undefined
+                ? letterFrequency[wordsMatchLength[i][j].toLowerCase()] = 1
+                : letterFrequency[wordsMatchLength[i][j].toLowerCase()]++;
+    }
+}
+for (var key in letterFrequency) {
+    if (letterFrequency[key] &gt; frequency &amp;&amp; lettersGuessed.indexOf(key) &lt; 0) {
+        frequency = letterFrequency[key];
+        l = key;
+    }
+}</pre><p>这是猜第一个字母的方法，后续的筛选将要依赖之前猜词的结果来进行，<code class=" language-javascript">filter</code>方法在递归中会被重复调用，之前猜词的结果会作为参数传入。</p><p>如果上一次猜对，那么返回的信息大概会长这样：</p><pre class=" language-javascript">word: **t**u*</pre><p>这显然是一种模式，可以将它转化为正则去筛选候选数组，我又实现了一个将此类字符串转化为正则的方法：</p><pre class=" language-javascript">function generatePattern(word) {
+    var patternStr = '';
+    var starNum = 0;
+    for (var i = 0, len = word.length; i &lt; len; i++) {
+        if (word[i] == '*') {
+            starNum = starNum + 1;
+        } else {
+            patternStr = patternStr + (starNum ? '\\w{' + starNum + '}' : '') + word[i];
+            starNum = 0;
+        }
+    }
+    // 修正结尾的星号
+    patternStr = patternStr + (starNum ? '\\w{' + starNum + '}' : '');
+    return new RegExp(patternStr, 'i');
+}</pre><p>得到正则后，用这个正则去过滤一下<code class=" language-javascript">wordsMatchLength</code>数组，删掉不匹配的单词：</p><pre class=" language-javascript">for (var i = 0, len = wordsMatchLength.length; i &lt; len; i++) {
+    if (wordsMatchLength[i] &amp;&amp; !generatePattern(word).test(wordsMatchLength[i])) {
+        wordsMatchLength.splice(i, 1);
+        i--;
+        len--;
+    }
+}</pre><p>如果上一次猜错了呢，那么上一次猜了哪个字母，就说明正确的单词中不应该包含它，那么遍历一下<code class=" language-javascript">wordsMatchLength</code>数组，凡是包含这个字母的单词通通干掉：</p><pre class=" language-javascript">for (var i = 0, len = wordsMatchLength.length; i &lt; len; i++) {
+    if (wordsMatchLength[i] &amp;&amp;
+            (wordsMatchLength[i].indexOf(letter.toLowerCase()) &gt; -1 || wordsMatchLength[i].indexOf(letter.toUpperCase()) &gt; -1)) {
+        wordsMatchLength.splice(i, 1);
+        i--;
+        len--;
+    }
+}</pre><p>过滤工作完成后，要做的就是再统计一次字母频率，选择最常出现的那个即可。</p><p>另外，还需要做一些修正工作，来应对所猜单词过于偏门，没有出现在单词库中的情况，准备一个备用数组，里面的单词顺序按照一般情况下字母的出现频率排列，一旦单词库被过滤完，就去遍历这个数组，选出频率最高，而之前还没有猜过的字母并返回。这时候就看运气了。</p><p>同时也要记住在没猜完一个单词后要把候选数组清空，纪录猜错次数和已猜过字母的变量也要复原，不要影响后面的计算。</p><h2>优化</h2><p>以上方法还有一些优化的空间：</p><ol><li>统计字母出现频率的时候，同一个单词中的同一个字母，不论出现几次都只算一次，比如 e 或 s 这样的字母，在一个单词中可能出现很多次，但是没有必要重复计数。</li><li>当候选数组被过滤完时，可以不用备用数组，切换为用户手动输入，这样可以利用用户英语构词法的知识进行有目的的猜测，但这种方法偏离了全自动程序的初衷。</li><li>最后就要借助对构词法的科学计算进行优化了，这种计算需要专业知识的支撑，普通开发者无法胜任。</li></ol><p>最后附上完整的源码实现：&nbsp;<a href="https://gist.github.com/classicemi/1aa5e102982d59ff036d" data-mce-href="https://gist.github.com/classicemi/1aa5e102982d59ff036d">源码</a></p>
+		</div>
+	</div>
 </div>
 <script src="libs/jquery-1.9.0.min.js"></script>
 <link href="libs/google-code-prettify/prettify.css" type="text/css" rel="stylesheet"/>

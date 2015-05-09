@@ -249,13 +249,11 @@ function getSyncNotes() {
 function getNoteContent(noteId) {
   return new Promise((resolve, reject) => {
     console.log("fetch note content");
-
     getToken()
       .then((token)=>{
         // 获取所有笔记
         var params = "?token=" + token + "&noteId=" + noteId;
         var getNoteContentAddr = encodeURI(Api.NoteContent + params);
-
         fetch(getNoteContentAddr, {method:"GET"})
           .then((response) => response.json())
           .then((res) => {
