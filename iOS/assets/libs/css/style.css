@@ -1,13 +1,16 @@
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 *,
 body {
     font-family: "lucida grande", "lucida sans unicode", lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
     font-weight: 300;
     font-size: 14px;
-
-    font-size: 18px;
 }
 body {
-  width: 800px;
+  width: 100%;
   margin: auto;
 }
 h1,
@@ -103,4 +106,19 @@ table tr:nth-child(2n) {
 
 #md {
   display: none;
+}
+
+/* Fix it*/
+pre.prettyprint {
+   width: 100%;
+   padding: 15px;
+
+   /* white-space: nowrap !important; */
+   overflow: auto !important;
+   word-wrap: normal;
+
+   border-radius: 10px;
+   background: #f8f8f8;
+   border: 3px dotted #e1e1e1;
+   font-family: Arial;
 }

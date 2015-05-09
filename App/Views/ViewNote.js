@@ -29,7 +29,7 @@ module.exports = React.createClass({
     Fetcher.getNoteContent(this.props.data.note["NoteId"])
       .then((content) => {
         if(!this.state.isMarkdown) {
-          
+
           var html = `<!DOCTYPE html>
                       <html>
                       <title>Leanote html</title>
@@ -93,7 +93,7 @@ module.exports = React.createClass({
   render() {
     var contentView = (
                         <HTMLWebView
-                          style={{width: Base.width-10}}
+                          style={{marginLeft:-20, width: Base.width+30}}
                           html={this.state.content}
                           makeSafe={false}
                           autoHeight={true}

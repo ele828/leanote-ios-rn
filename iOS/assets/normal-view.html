@@ -7,8 +7,7 @@
 <link href="libs/css/bootstrap.css" rel="stylesheet">
 <link href="libs/css/style.css" rel="stylesheet">
 <body>
-<div class="container">
-	<div class="row">
+<div class="wrap">
 		<div class="col-xs-12">
 			<p><strong><a class="op-bk-polysemy-album op-se-listen-recommend" href="http://www.baidu.com/link?url=cOsksrNOFtHgG5gGOUwGLVA1UNjJMaE_O9AxNdOUfhUYqzd2fI6r_cGtWt3dsNkbcAqFkNUZbIgpyCJTCpwebK" target="_blank" data-mce-href="http://www.baidu.com/link?url=cOsksrNOFtHgG5gGOUwGLVA1UNjJMaE_O9AxNdOUfhUYqzd2fI6r_cGtWt3dsNkbcAqFkNUZbIgpyCJTCpwebK"><img class="c-img c-img6" src="https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=2775651185,1661377839&amp;fm=58" alt="" data-mce-src="https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=2775651185,1661377839&amp;fm=58"></a></strong></p><p><strong><br data-mce-bogus="1"></strong></p><p><strong>本文同步自我的&nbsp;<a href="https://github.com/classicemi/blog/issues/11" data-mce-href="https://github.com/classicemi/blog/issues/11">GitHub</a></strong></p><p>过去，在文曲星等各种电子词典中，经常会有一个叫做猜单词的游戏。给定一个单词，告诉你这个单词有几个字母，然后你去猜。输入一个字母，如果单词中包含这个字母，则将单词中所有的这个字母都显示出来，如果猜错，则扣生命值，在生命值扣光之前全部猜对则为胜利。</p><p>过去我很喜欢玩这个游戏，因为它能让背单词显得不那么枯燥乏味，也能提高自己对单词构词规律的认识。但是这篇文章要说的，不是怎么去玩好这个游戏，而是怎么借助程序的力量去自动破解猜单词的难题。</p><h2>背景</h2><p>假设现在存在这样的一个接口<code class=" language-javascript">http<span class="token punctuation">:</span><span class="token operator">/</span><span class="token operator">/</span>hangman<span class="token punctuation">.</span>com<span class="token operator">/</span>game<span class="token operator">/</span>on</code>，它可以接受 post 请求，合法的请求共有四种。第一种是开始游戏，发送这样的数据可以重新开始一次新的游戏：</p><pre class=" language-javascript">{
     "playerId": "classicemi",
@@ -76,20 +75,20 @@
         "totalWrongGuessCount": 100,
         "score": 300
     }
-}</pre><p>OK，关于接口已经介绍完了，下面就来玩这个游戏吧。</p><h2>思考</h2><p>首先，由于我们要实现一个全自动的程序，不能借助人的力量，也就是说，用户的单词量的多少根本派不上用场。如果这个单词只是一个随机字符串的话，问题倒也简单了，随机猜字母即可。但是现在已经明确是英语单词，虽然比起随机字符串，范围大大缩小，但是要准确去猜英语单词，随机猜字母肯定是行不通了。</p><p>既不能借助用户的单词量，又不能使用随机字母，那么我们就需要一个样本总量足够大的单词表作为我们的数据库。在 UNIX 系统中，<code class=" language-javascript"><span class="token operator">/</span>usr<span class="token operator">/</span>share<span class="token operator">/</span>dict</code>目录中，有一个<code class=" language-javascript">words</code>文件，用 vim 打开看一下，发现里面有 20 多万个单词，这就是一个现成的单词数据库。不过根据后来的测试结果来看，20多万的单词量玩这个游戏还是有点不够，所以，还是去找开源的单词列表数据吧，最后我找到一个 65w 单词量的文件，正确率就比较高了。</p><h3>流程</h3><p>有了大量的单词数据，只是打好了基础，就像张无忌练了九阳神功，内力充沛，但是没有招式还是不行，充其量只是打不死，在这里我们需要的招式则是一个科学的算法。</p><p>不过在实现算法之前，先来把自动化程序的骨架搭起来，使流程控制能够跑通。我使用的是 Node.js 来执行程序，依赖的模块有两个，分别是<code class=" language-javascript">inquirer</code>和<code class=" language-javascript">request</code>。前者用来构建交互式的命令行程序，便于必要时接受用户的指令；后者用来方便地发送 post 请求。</p><p>程序的流程图如下：</p><pre class=" language-javascript">                  +-------+                                    
-                  | start |                                    
-                  +---+---+                                    
-                      |                                        
-                      v                                        
+}</pre><p>OK，关于接口已经介绍完了，下面就来玩这个游戏吧。</p><h2>思考</h2><p>首先，由于我们要实现一个全自动的程序，不能借助人的力量，也就是说，用户的单词量的多少根本派不上用场。如果这个单词只是一个随机字符串的话，问题倒也简单了，随机猜字母即可。但是现在已经明确是英语单词，虽然比起随机字符串，范围大大缩小，但是要准确去猜英语单词，随机猜字母肯定是行不通了。</p><p>既不能借助用户的单词量，又不能使用随机字母，那么我们就需要一个样本总量足够大的单词表作为我们的数据库。在 UNIX 系统中，<code class=" language-javascript"><span class="token operator">/</span>usr<span class="token operator">/</span>share<span class="token operator">/</span>dict</code>目录中，有一个<code class=" language-javascript">words</code>文件，用 vim 打开看一下，发现里面有 20 多万个单词，这就是一个现成的单词数据库。不过根据后来的测试结果来看，20多万的单词量玩这个游戏还是有点不够，所以，还是去找开源的单词列表数据吧，最后我找到一个 65w 单词量的文件，正确率就比较高了。</p><h3>流程</h3><p>有了大量的单词数据，只是打好了基础，就像张无忌练了九阳神功，内力充沛，但是没有招式还是不行，充其量只是打不死，在这里我们需要的招式则是一个科学的算法。</p><p>不过在实现算法之前，先来把自动化程序的骨架搭起来，使流程控制能够跑通。我使用的是 Node.js 来执行程序，依赖的模块有两个，分别是<code class=" language-javascript">inquirer</code>和<code class=" language-javascript">request</code>。前者用来构建交互式的命令行程序，便于必要时接受用户的指令；后者用来方便地发送 post 请求。</p><p>程序的流程图如下：</p><pre class=" language-javascript">                  +-------+
+                  | start |
+                  +---+---+
+                      |
+                      v
             +---------+-----------+               +-----------+
        +---&gt;+ flow control center | &lt;-------------+ next word |
        |    +---------+-----------+               +-------+---+
-       |              |                                   ^    
-       |        is the|guess finished?                    |no  
-       |              |              is the game finished?|    
-get the|result        +--------+yes+----------------------+    
-       |              |no                              yes|    
-       |              v                                   v    
+       |              |                                   ^
+       |        is the|guess finished?                    |no
+       |              |              is the game finished?|
+get the|result        +--------+yes+----------------------+
+       |              |no                              yes|
+       |              v                                   v
        |       +------+-------+                      +----+---+
        +-------+ make a guess |                      | submit |
                +--------------+                      +--------+</pre><p>根据流程图可以知道，我们需要几个函数来实现这个流程，图中的一个方块就对应一个函数，首先是流程的入口，程序最开始也是调用这个方法：</p><pre class=" language-javascript">function startGame() {
@@ -312,7 +311,6 @@ for (var key in letterFrequency) {
         len--;
     }
 }</pre><p>过滤工作完成后，要做的就是再统计一次字母频率，选择最常出现的那个即可。</p><p>另外，还需要做一些修正工作，来应对所猜单词过于偏门，没有出现在单词库中的情况，准备一个备用数组，里面的单词顺序按照一般情况下字母的出现频率排列，一旦单词库被过滤完，就去遍历这个数组，选出频率最高，而之前还没有猜过的字母并返回。这时候就看运气了。</p><p>同时也要记住在没猜完一个单词后要把候选数组清空，纪录猜错次数和已猜过字母的变量也要复原，不要影响后面的计算。</p><h2>优化</h2><p>以上方法还有一些优化的空间：</p><ol><li>统计字母出现频率的时候，同一个单词中的同一个字母，不论出现几次都只算一次，比如 e 或 s 这样的字母，在一个单词中可能出现很多次，但是没有必要重复计数。</li><li>当候选数组被过滤完时，可以不用备用数组，切换为用户手动输入，这样可以利用用户英语构词法的知识进行有目的的猜测，但这种方法偏离了全自动程序的初衷。</li><li>最后就要借助对构词法的科学计算进行优化了，这种计算需要专业知识的支撑，普通开发者无法胜任。</li></ol><p>最后附上完整的源码实现：&nbsp;<a href="https://gist.github.com/classicemi/1aa5e102982d59ff036d" data-mce-href="https://gist.github.com/classicemi/1aa5e102982d59ff036d">源码</a></p>
-		</div>
 	</div>
 </div>
 <script src="libs/jquery-1.9.0.min.js"></script>
