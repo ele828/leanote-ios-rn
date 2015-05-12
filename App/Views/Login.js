@@ -95,6 +95,11 @@ var LoginView = React.createClass({
       .done();
   },
 
+  _addSelfHost: function() {
+    this.addHost = !this.addHost;
+    this.setState({addHost: this.addHost});
+  },
+
   _doReg: function() {
     this.props.navigator.push({ id: 'register' });
   },
@@ -133,46 +138,79 @@ var LoginView = React.createClass({
       ( <Spinner/> ) :
       ( <View/>);
 
-    var loginView = this.state.logined?
+    var loginView = this.state.logined ?
                     (<View></View>)
                     :(<View style={styles.container}>
-                          <Image source={require('image!lealogo_blue')} style={styles.logo}/>
+                          <View style={styles.logoContainer}>
+                            <Image source={require('image!leanote_icon_blue')} style={styles.logo}/>
+                          </View>
                           <View style={styles.form}>
-                              <TextInput
-                                style={styles.inputs}
-                                placeholder="请输入邮箱"
-                                keyboardType="email-address"
-                                clearButtonMode="while-editing"
-                                returnKeyType="next"
-                                onChangeText={(email) => this.setState({email: email})}
-                                onEndEditing={()=>{
-                                  this.refs["pwInput"].focus();
-                                }}
-                              />
-                              <View style={styles.line}></View>
-                              <TextInput
-                                ref="pwInput"
-                                style={styles.inputs}
-                                password="true"
-                                placeholder="请输入密码"
-                                clearButtonMode="while-editing"
-                                returnKeyType="done"
-                                onChangeText={(pw) => this.setState({password: pw})}
-                                onEndEditing={this._doLogin}
-                              />
-                              <View style={styles.line}></View>
+
+                            <View style={styles.inputContainer}>
+                                {this.state.addHost ?
+                                (<View><TextInput
+                                  style={styles.inputs}
+                                  placeholder="服务地址, 如 http://leanote.com"
+                                  keyboardType="email-address"
+                                  clearButtonMode="while-editing"
+                                  returnKeyType="next"
+                                  onChangeText={(host) => this.setState({host: host})}
+                                  onEndEditing={()=>{
+                                    this.refs["email"].focus();
+                                  }}
+                                /><View style={styles.line}></View></View>
+                                )
+                                : null
+                                }
+
+                                <TextInput
+                                  ref="email"
+                                  style={styles.inputs}
+                                  placeholder="用户/邮箱"
+                                  keyboardType="email-address"
+                                  clearButtonMode="while-editing"
+                                  returnKeyType="next"
+                                  onChangeText={(email) => this.setState({email: email})}
+                                  onEndEditing={()=>{
+                                    this.refs["pwInput"].focus();
+                                  }}
+                                />
+                                <View style={styles.line}></View>
+                                <TextInput
+                                  ref="pwInput"
+                                  style={styles.inputs}
+                                  password="true"
+                                  placeholder="密码"
+                                  clearButtonMode="while-editing"
+                                  returnKeyType="done"
+                                  onChangeText={(pw) => this.setState({password: pw})}
+                                  onEndEditing={this._doLogin}
+                                />
+
+                              </View>
+
                               <View style={styles.buttonGroup}>
                                 <TouchableOpacity activeOpacity="0.8" onPress={this._doLogin}>
                                   <View style={styles.Login}>
                                     <Text style={styles.LoginText}>登   录</Text>
                                   </View>
                                 </TouchableOpacity>
+
+                                <TouchableOpacity activeOpacity="0.5" onPress={this._addSelfHost}>
+                                  <View style={[styles.Reg, styles.selfHost]}>
+                                      <Text style={[styles.RegText, styles.selfHostText]}>
+                                      {this.state.addHost ? "使用Leanote服务" : "添加自建服务"}
+                                      </Text>
+                                  </View>
+                                </TouchableOpacity>
+
                                 <TouchableOpacity activeOpacity="0.8" onPress={this._doReg}>
                                   <View style={styles.Reg}>
                                       <Text style={styles.RegText}>创建leanote账户</Text>
                                   </View>
                                 </TouchableOpacity>
                               </View>
+
                           </View>
                             {spinner}
                         </View>
@@ -185,19 +223,38 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#00579b',
+  },
+  logoContainer: {
+    backgroundColor: '#fff',
+    marginTop: 80,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    overflow: 'hidden',
+    // 垂直居中
+    justifyContent: 'center',
   },
   logo: {
-    marginTop: 80
+    // padding: 40,
+    width: 60,
+    height: 60,
+    alignSelf: 'center',
+    // borderRadius: 30,
   },
   form: {
-    marginTop: 30
+    marginTop: 30,
+  },
+  inputContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    overflow: 'hidden',
   },
   inputs: {
-    marginTop: 30,
     height: 40,
     width: Base.width/1.3,
-    padding: 10
+    fontSize: 14,
+    padding: 10,
   },
   line: {
     height:0.5,
@@ -211,18 +268,31 @@ var styles = StyleSheet.create({
     width: Base.width/1.3,
     height: 40,
     backgroundColor: '#0379d5',
+    // borderRadius: 5,
   },
   LoginText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#fff'
+    color: '#fff',
   },
   Reg: {
-    marginTop: 50,
     alignSelf: 'center',
+    marginTop: 20,
   },
   RegText: {
-    color: '#ababab'
+    color: '#eee'
+  },
+  selfHost: {
+    // marginTop: 50,
+    position: 'absolute',
+    bottom: -100,
+    // left: 0,
+    // right: 0,
+    // alignItems: 'center',
+    width: Base.width/1.3,
+  },
+  selfHostText: {
+    alignSelf: 'center',
   }
 });
 
