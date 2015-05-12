@@ -21,3 +21,7 @@ exports.formatDate = function (date, friendly) {
   }
 
 };
+
+exports.isValidUrl = function(url) {
+  return /http(s*):\/\/.+/.test(url);
+}

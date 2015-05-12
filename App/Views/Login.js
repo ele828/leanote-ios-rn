@@ -20,6 +20,7 @@ var {
 
 var Api = require("../Common/Api");
 var Base = require("../Common/Base");
+var Tools = require("../Common/Tools");
 var Spinner = require("../Components/Spinner");
 
 var LoginView = React.createClass({
@@ -28,23 +29,56 @@ var LoginView = React.createClass({
     this.setState({startLogin: true});
 
     // 构造登录数据
+    var host = this.state.host;
+    if(this.state.addHost) {
+      if(!host || !Tools.isValidUrl(host)) {
+        this.setState({startLogin: false});
+        Base.showMsg("登录失败", "请输入正确的自建服务地址!");
+        return;
+      }
+    }
+    else {
+      host = '';
+    }
+
     var email = this.state.email;
     var pwd   = this.state.password;
-    var data  = "?email=" + email + "&pwd=" + pwd;
-    var LoginAddr = encodeURI(Api.Login + data);
 
     // 合法性检查
     if(email === "" || pwd === "") {
       this.setState({startLogin: false});
-      Base.showMsg("登录失败", "请输入登录信息！");
+      Base.showMsg("登录失败", "请输入登录信息!");
       return;
-    } else if(email.indexOf("@") < 0) {
+    }
+    /*
+     允许使用用户名和密码
+     else if(email.indexOf("@") < 0) {
       this.setState({startLogin: false});
       Base.showMsg("登录失败", "请输入正确的邮箱地址！");
       return;
     }
+    */
 
-    fetch(LoginAddr, {method:"GET"})
+    /*
+    不支持
+    var formData = new FormData();
+    formData.append('email', email);
+    formData.append('pwd', pwd);
+    */
+
+    // https://github.com/facebook/react-native/blob/62b90cfcc5c254076541ed8dc6372e16444b41ba/Libraries/Fetch/fetch.js
+    var data  = "?email=" + encodeURI(email) + "&pwd=" + encodeURI(pwd);
+    var loginAddr;
+    if(host) {
+      loginAddr = host + '/api/auth/login';
+    }
+    else {
+      loginAddr = Api.Login;
+    }
+    var loginAddrAndData = loginAddr + data;
+    // var loginAddr = encodeURI(host || Api.Login);
+
+    fetch(loginAddrAndData, {method: 'POST'})
       .then((response) => response.json())
       .then((res)=>{
 
@@ -96,8 +130,7 @@ var LoginView = React.createClass({
   },
 
   _addSelfHost: function() {
-    this.addHost = !this.addHost;
-    this.setState({addHost: this.addHost});
+    this.setState({addHost: !this.state.addHost});
   },
 
   _doReg: function() {
@@ -184,7 +217,8 @@ var LoginView = React.createClass({
                                   clearButtonMode="while-editing"
                                   returnKeyType="done"
                                   onChangeText={(pw) => this.setState({password: pw})}
-                                  onEndEditing={this._doLogin}
+                                  /*onEndEditing={this._doLogin}*/
+                                  /*输入完密码后, 不应该立即登录, 如果输完后重新点击email会触发登录动作*/
                                 />
 
                               </View>
@@ -206,7 +240,7 @@ var LoginView = React.createClass({
 
                                 <TouchableOpacity activeOpacity="0.8" onPress={this._doReg}>
                                   <View style={styles.Reg}>
-                                      <Text style={styles.RegText}>创建leanote账户</Text>
+                                      <Text style={styles.RegText}>创建Leanote账户</Text>
                                   </View>
                                 </TouchableOpacity>
                               </View>
