@@ -114,7 +114,7 @@ pre.prettyprint {
    padding: 15px;
 
    /* white-space: nowrap !important; */
-   overflow: auto !important;
+   overflow-x: scroll !important;
    word-wrap: normal;
 
    border-radius: 10px;

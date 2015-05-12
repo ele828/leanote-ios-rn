@@ -24,5 +24,4 @@ project.xcworkspace
 
 # node.js
 #
-node_modules/react-native
 npm-debug.log
