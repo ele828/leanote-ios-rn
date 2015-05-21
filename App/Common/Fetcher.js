@@ -14,15 +14,17 @@ var Api = require("./Api");
 var Tools = require("./Tools");
 var Storage = require("./Storage");
 
-var TOKEN = "";    // 请求使用的令牌
-
 // 获取用户token
 function getToken() {
   return new Promise((resolve, reject) => {
-    if(TOKEN !== "") resolve(TOKEN);
+    if(global.TOKEN !== undefined) {
+      resolve(global.TOKEN);
+      return;
+    }
     AsyncStorage.getItem("User:token")
       .then((token) => {
-        TOKEN = token;
+        // 写入全局变量
+        global.TOKEN = token;
         resolve(TOKEN);
       })
       .catch(() => {

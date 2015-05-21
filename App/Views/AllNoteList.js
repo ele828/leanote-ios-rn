@@ -102,7 +102,6 @@ var AllNoteList = React.createClass({
         return JSON.parse(notes);
       })
       .then((notes)=>{
-        // console.log(notes);
         this.setState( {  notes : notes });
         this.setState({notesLoaded: true});
       });
