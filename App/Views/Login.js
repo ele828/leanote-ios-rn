@@ -26,6 +26,7 @@ var Spinner = require("../Components/Spinner");
 var LoginView = React.createClass({
 
   _doLogin: function() {
+    AsyncStorage.clear();
     this.setState({startLogin: true});
 
     // 构造登录数据
