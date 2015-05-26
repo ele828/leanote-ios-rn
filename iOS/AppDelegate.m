@@ -54,6 +54,14 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+	
+	// life test
+	
+	NSString *sourcePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"chinook.sqlite"];
+	NSLog(@"main bundle path");
+	NSLog(sourcePath);
+	NSLog(@"main bundle path end");
+	
   return YES;
 }
 

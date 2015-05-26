@@ -11,7 +11,7 @@ var {
 
 var Home       = require('./App/Views/Home');
 var Login      = require('./App/Views/Login');
-var Register   = require('./App/Views/Register')
+var Register   = require('./App/Views/Register');
 
 var leanote = React.createClass({
   render: function() {

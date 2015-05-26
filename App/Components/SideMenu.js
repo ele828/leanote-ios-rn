@@ -129,6 +129,8 @@ module.exports = React.createClass({
                 .then(()=>{
                   this.props.nav.replace({ id: 'login' });
                 });
+              // console.log('life-------');
+              // this.props.nav.replace({ id: 'login' });
             }}>
                 <View style={styles.menuItem}>
                   <Icon
