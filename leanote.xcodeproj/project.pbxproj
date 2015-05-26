@@ -25,6 +25,9 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+		1CCEFC471B148B1F009EA925 /* libAIBSQLite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CCEFC3B1B148ADD009EA925 /* libAIBSQLite.a */; };
+		1CCEFC491B148B54009EA925 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CCEFC481B148B54009EA925 /* libsqlite3.dylib */; };
+		1CD6D91A1B14D4F60094296B /* leanote.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1CD6D9191B14D4F60094296B /* leanote.sqlite */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 /* End PBXBuildFile section */
 
@@ -113,6 +116,13 @@
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
 		};
+		1CCEFC3A1B148ADD009EA925 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CCEFC341B148ADC009EA925 /* AIBSQLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E23D7B471ACEFE2A00C59171;
+			remoteInfo = AIBSQLite;
+		};
 		78C398B81ACF4ADC00677621 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */;
@@ -152,6 +162,9 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = iOS/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = iOS/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+		1CCEFC341B148ADC009EA925 /* AIBSQLite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AIBSQLite.xcodeproj; path = "node_modules/react-native-sqlite/AIBSQLite.xcodeproj"; sourceTree = "<group>"; };
+		1CCEFC481B148B54009EA925 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		1CD6D9191B14D4F60094296B /* leanote.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = leanote.sqlite; path = sqlite/leanote.sqlite; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -168,6 +181,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1CCEFC491B148B54009EA925 /* libsqlite3.dylib in Frameworks */,
+				1CCEFC471B148B1F009EA925 /* libAIBSQLite.a in Frameworks */,
 				078262391AF524ED00E9F8F0 /* libAIBHTMLWebView.a in Frameworks */,
 				079952E31AF317D70090C3FF /* libReactNativeIcons.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
@@ -297,6 +312,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		1CCEFC351B148ADC009EA925 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1CCEFC3B1B148ADD009EA925 /* libAIBSQLite.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		78C398B11ACF4ADC00677621 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -308,6 +331,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				1CCEFC341B148ADC009EA925 /* AIBSQLite.xcodeproj */,
 				078262251AF524D700E9F8F0 /* AIBHTMLWebView.xcodeproj */,
 				079952C21AF3172A0090C3FF /* ReactNativeIcons.xcodeproj */,
 				78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */,
@@ -335,6 +359,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				1CD6D9191B14D4F60094296B /* leanote.sqlite */,
+				1CCEFC481B148B54009EA925 /* libsqlite3.dylib */,
 				07DA1B761AFC7E6C00E063BB /* assets */,
 				079952E41AF318190090C3FF /* FontAwesome.otf */,
 				13B07FAE1A68108700A75B9A /* leanote */,
@@ -423,6 +449,10 @@
 				{
 					ProductGroup = 078262261AF524D700E9F8F0 /* Products */;
 					ProjectRef = 078262251AF524D700E9F8F0 /* AIBHTMLWebView.xcodeproj */;
+				},
+				{
+					ProductGroup = 1CCEFC351B148ADC009EA925 /* Products */;
+					ProjectRef = 1CCEFC341B148ADC009EA925 /* AIBSQLite.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
@@ -555,6 +585,13 @@
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		1CCEFC3B1B148ADD009EA925 /* libAIBSQLite.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libAIBSQLite.a;
+			remoteRef = 1CCEFC3A1B148ADD009EA925 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		78C398B91ACF4ADC00677621 /* libRCTLinking.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -584,6 +621,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				079952E51AF318190090C3FF /* FontAwesome.otf in Resources */,
+				1CD6D91A1B14D4F60094296B /* leanote.sqlite in Resources */,
 				008F07F31AC5B25A0029DE68 /* main.jsbundle in Resources */,
 				07DA1B771AFC7E6C00E063BB /* assets in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,

@@ -70,8 +70,10 @@ var AllNoteList = React.createClass({
   componentDidMount: function() {
     // 从本地获取笔记
     this._loadNotesFromStorage();
-    // 从网络更新笔记
+
+    // 增量同步笔记
     this._fetchSyncNotes();
+    
     props = this.props;
 
     this.refreshed = true;
@@ -107,6 +109,9 @@ var AllNoteList = React.createClass({
       });
   },
 
+  // TODO
+  // 增量同步之
+  // 应当先增量同步笔记本
   _fetchSyncNotes: function() {
     Fetcher.getSyncNotes()
       .then(()=>{

@@ -23,8 +23,11 @@ var Base = require("../Common/Base");
 var Tools = require("../Common/Tools");
 var Spinner = require("../Components/Spinner");
 
-var LoginView = React.createClass({
+var DB = require("../DB/Sqlite");
 
+// sqlite
+
+var LoginView = React.createClass({
   _doLogin: function() {
     AsyncStorage.clear();
     this.setState({startLogin: true});
@@ -92,7 +95,7 @@ var LoginView = React.createClass({
         }
 
         // 登录成功
-        if(res["Ok"] === true){
+        if(res["Ok"] === true) {
           var token  = res["Token"],
               userId = res["UserId"],
               email  = res["Email"];
@@ -139,7 +142,7 @@ var LoginView = React.createClass({
   },
 
   componentDidMount: function() {
-    // 判断用户是否已经登录
+    // 判断用户是否已经登录, 如果登录了, 则直接到主页
     // AsyncStorage.clear();
     AsyncStorage.getItem("User:token")
       .then((token)=>{
@@ -153,6 +156,8 @@ var LoginView = React.createClass({
       .catch((err)=>{
         this.setState({logined: false});
       });
+
+    
   },
 
   getInitialState: function() {
@@ -160,7 +165,7 @@ var LoginView = React.createClass({
       email: '',
       password: '',
       startLogin: false,
-      logined: true
+      logined: true // 默认是已登录, -> render -> componentDidMount -> reRender
     }
   },
 
@@ -173,83 +178,83 @@ var LoginView = React.createClass({
       ( <View/>);
 
     var loginView = this.state.logined ?
-                    (<View></View>)
-                    :(<View style={styles.container}>
-                          <View style={styles.logoContainer}>
-                            <Image source={require('image!leanote_icon_blue')} style={styles.logo}/>
-                          </View>
-                          <View style={styles.form}>
+      (<View></View>)
+      :(<View style={styles.container}>
+            <View style={styles.logoContainer}>
+              <Image source={require('image!leanote_icon_blue')} style={styles.logo}/>
+            </View>
+            <View style={styles.form}>
 
-                            <View style={styles.inputContainer}>
-                                {this.state.addHost ?
-                                (<View><TextInput
-                                  style={styles.inputs}
-                                  placeholder="服务地址, 如 http://leanote.com"
-                                  keyboardType="email-address"
-                                  clearButtonMode="while-editing"
-                                  returnKeyType="next"
-                                  onChangeText={(host) => this.setState({host: host})}
-                                  onEndEditing={()=>{
-                                    this.refs["email"].focus();
-                                  }}
-                                /><View style={styles.line}></View></View>
-                                )
-                                : null
-                                }
+              <View style={styles.inputContainer}>
+                  {this.state.addHost ?
+                  (<View><TextInput
+                    style={styles.inputs}
+                    placeholder="服务地址, 如 http://leanote.com"
+                    keyboardType="email-address"
+                    clearButtonMode="while-editing"
+                    returnKeyType="next"
+                    onChangeText={(host) => this.setState({host: host})}
+                    onEndEditing={()=>{
+                      this.refs["email"].focus();
+                    }}
+                  /><View style={styles.line}></View></View>
+                  )
+                  : null
+                  }
 
-                                <TextInput
-                                  ref="email"
-                                  style={styles.inputs}
-                                  placeholder="用户/邮箱"
-                                  keyboardType="email-address"
-                                  clearButtonMode="while-editing"
-                                  returnKeyType="next"
-                                  onChangeText={(email) => this.setState({email: email})}
-                                  onEndEditing={()=>{
-                                    this.refs["pwInput"].focus();
-                                  }}
-                                />
-                                <View style={styles.line}></View>
-                                <TextInput
-                                  ref="pwInput"
-                                  style={styles.inputs}
-                                  password="true"
-                                  placeholder="密码"
-                                  clearButtonMode="while-editing"
-                                  returnKeyType="done"
-                                  onChangeText={(pw) => this.setState({password: pw})}
-                                  /*onEndEditing={this._doLogin}*/
-                                  /*输入完密码后, 不应该立即登录, 如果输完后重新点击email会触发登录动作*/
-                                />
+                  <TextInput
+                    ref="email"
+                    style={styles.inputs}
+                    placeholder="用户/邮箱"
+                    keyboardType="email-address"
+                    clearButtonMode="while-editing"
+                    returnKeyType="next"
+                    onChangeText={(email) => this.setState({email: email})}
+                    onEndEditing={()=>{
+                      this.refs["pwInput"].focus();
+                    }}
+                  />
+                  <View style={styles.line}></View>
+                  <TextInput
+                    ref="pwInput"
+                    style={styles.inputs}
+                    password="true"
+                    placeholder="密码"
+                    clearButtonMode="while-editing"
+                    returnKeyType="done"
+                    onChangeText={(pw) => this.setState({password: pw})}
+                    /*onEndEditing={this._doLogin}*/
+                    /*输入完密码后, 不应该立即登录, 如果输完后重新点击email会触发登录动作*/
+                  />
 
-                              </View>
+                </View>
 
-                              <View style={styles.buttonGroup}>
-                                <TouchableOpacity activeOpacity="0.8" onPress={this._doLogin}>
-                                  <View style={styles.Login}>
-                                    <Text style={styles.LoginText}>登   录</Text>
-                                  </View>
-                                </TouchableOpacity>
+                <View style={styles.buttonGroup}>
+                  <TouchableOpacity activeOpacity="0.8" onPress={this._doLogin}>
+                    <View style={styles.Login}>
+                      <Text style={styles.LoginText}>登   录</Text>
+                    </View>
+                  </TouchableOpacity>
 
-                                <TouchableOpacity activeOpacity="0.5" onPress={this._addSelfHost}>
-                                  <View style={[styles.Reg, styles.selfHost]}>
-                                      <Text style={[styles.RegText, styles.selfHostText]}>
-                                      {this.state.addHost ? "使用Leanote服务" : "添加自建服务"}
-                                      </Text>
-                                  </View>
-                                </TouchableOpacity>
+                  <TouchableOpacity activeOpacity="0.5" onPress={this._addSelfHost}>
+                    <View style={[styles.Reg, styles.selfHost]}>
+                        <Text style={[styles.RegText, styles.selfHostText]}>
+                        {this.state.addHost ? "使用Leanote服务" : "添加自建服务"}
+                        </Text>
+                    </View>
+                  </TouchableOpacity>
 
-                                <TouchableOpacity activeOpacity="0.8" onPress={this._doReg}>
-                                  <View style={styles.Reg}>
-                                      <Text style={styles.RegText}>创建Leanote账户</Text>
-                                  </View>
-                                </TouchableOpacity>
-                              </View>
+                  <TouchableOpacity activeOpacity="0.8" onPress={this._doReg}>
+                    <View style={styles.Reg}>
+                        <Text style={styles.RegText}>创建Leanote账户</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
 
-                          </View>
-                            {spinner}
-                        </View>
-                    )
+            </View>
+              {spinner}
+          </View>
+      )
     return loginView;
   }
 });
