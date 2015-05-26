@@ -24,11 +24,9 @@ Based on React-Native, under developing.
 7. 代码重构
 
 
-# 依赖 react-native-sql
+# 依赖 react-native-sqlite
 
 安装:
-
-Install using npm with `npm install --save react-native-sqlite`
 
 You then need to add the Objective C part to your XCode project. Drag
 `AIBSQLite.xcodeproj` from the `node_modules/react-native-sqlite` folder into your XCode projec. Click on the your project in XCode, goto `Build Phases` then `Link Binary With Libraries` and add `libAIBSQLite.a` and `libsqlite3.dylib`.
