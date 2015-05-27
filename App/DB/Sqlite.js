@@ -292,7 +292,7 @@ BaseDb.prototype._find = (function() {
     this.rowCallback = rowCallback;
     this.afterCallback = afterCallback;
     if(rowCallback) {
-      this.exec(rowCallback, afterCallback);
+      this.exec(afterCallback, rowCallback);
     }
   }
   // limit 15 offset 20 跳过20条记录选出15条记录
@@ -305,7 +305,7 @@ BaseDb.prototype._find = (function() {
     this.sortQ = sort;
     return this;
   }
-  F.prototype.exec = function(rowCallback, afterCallback) {
+  F.prototype.exec = function(afterCallback, rowCallback) {
     var where = me._where(this.query);
 
     // select * from dbname where xxxx order by title desc, createdTime asc
@@ -345,9 +345,9 @@ BaseDb.prototype._find = (function() {
       rows.push(row);
     }, function afterCb(err) {
       if(err) {
-        afterCallback(false);
+        afterCallback && afterCallback(err, false);
       } else {
-        afterCallback(rows);
+        afterCallback && afterCallback(err, rows);
       }
     });
   }
@@ -355,26 +355,26 @@ BaseDb.prototype._find = (function() {
 })();
 
 // 查找
-BaseDb.prototype.find = function(query, rowCallback, afterCallback) {
+BaseDb.prototype.find = function(query, afterCallback, rowCallback) {
   var me = this;
-  return new this._find(this, query, rowCallback, afterCallback);
+  return new this._find(this, query, afterCallback, rowCallback);
 };
 
 // 一条数据
 BaseDb.prototype.findOne = function(query, callback) {
   var me = this;
   var q = new this._find(this, query);
-  q.limit(1).exec(function(row) {
-  }, function(rows) {
-    if(rows) {
+  q.limit(1).exec(
+  function(err, rows) {
+    if(err, rows) {
       var rows = me.fixRows(rows);
       console.log(rows + '>>>>>>>>>>>>>>>>>');
-      callback && callback(rows[0]);
+      callback && callback(err, rows[0]);
     }
     else {
-      callback && callback(false);
+      callback && callback(err, null);
     }
-  });
+  }, function() {});
 };
 
 // ok
@@ -391,9 +391,9 @@ BaseDb.prototype.count = function(query, callback) {
     rows.push(row);
   }, function afterCb(err) {
     if(err) {
-      callback(false);
+      callback(err);
     } else {
-      callback(rows[0]['count']);
+      callback(err, rows[0]['count']);
     }
   });
 };

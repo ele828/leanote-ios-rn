@@ -42,6 +42,9 @@ var AllNotebooks = require("./AllNotebooks");
 var SideBarButton = require("../Components/SideBarButton");
 var RefreshButton = require("../Components/RefreshButton");
 
+var SyncService = require('../Service/sync');
+var UserService = require('../Service/user');
+
 var props = null;
 var AllNoteList = React.createClass({
   mixins: [tweenState.Mixin, TimerMixin],
@@ -113,6 +116,22 @@ var AllNoteList = React.createClass({
   // 增量同步之
   // 应当先增量同步笔记本
   _fetchSyncNotes: function() {
+
+    UserService.init(function(user) {
+      if(!user.Usn) {
+        console.log('需要全量同步!!');
+
+        SyncService.fullSync(function() {
+
+
+        });
+      }
+
+    });
+
+    return;
+
+
     Fetcher.getSyncNotes()
       .then(()=>{
         this._loadNotesFromStorage();

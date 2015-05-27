@@ -51,7 +51,7 @@ User = {
 	saveCurUser: function(user, callback) {
 		// 当前用户是否在数据库中
 		console.log('save cur User');
-		db.users.count({_id: user.UserId}, function(count) {
+		db.users.count({_id: user.UserId}, function(err, count) {
 			if(!count) {
 				console.log('当前用户不在数据库中, 添加一个');
 				// 添加一个
@@ -99,8 +99,8 @@ User = {
 		me.getG(function(g) {
 			me.g = g;
 
-			db.users.findOne({IsActive: true}, function(user) {
-				if(!user || !user.UserId) {
+			db.users.findOne({IsActive: true}, function(err, user) {
+				if(err || !user || !user.UserId) {
 					console.log('用户不存在');
 					callback && callback(false);
 				} else {

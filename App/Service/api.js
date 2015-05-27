@@ -91,163 +91,112 @@ var Api = {
 		url =  url + '?' + paramStr;
 		return url;
 	},
+
+	// get
+	get: function(url, param, callback) {
+		fetch(this.getUrl(url, param), {method: 'GET'})
+	      .then((response) => response.json())
+	      .then(function(ret) {
+	      	if(Common.isOk(ret)) {
+				callback && callback(ret);
+			} else {
+				callback && callback(false);
+			}
+	      })
+	      .catch((err) => {
+	        console.log(err);
+	        return callback && callback(false);
+	      })
+	      .done();
+	},
+
+	// post
+	post: function(url, param, callback) {
+		fetch(this.getUrl(url, param), {method: 'POST'})
+	      .then((response) => response.json())
+	      .then(function(ret) {
+	      	if(Common.isOk(ret)) {
+				callback && callback(ret);
+			} else {
+				callback && callback(false);
+			}
+	      })
+	      .catch((err) => {
+	        console.log(err);
+	        return callback && callback(false);
+	      })
+	      .done();
+	},
+
 	// 登录
+	// [ok]
 	auth: function(email, pwd, host, callback) { 
 		var me = this;
 
 		// 设置server host
 		Evt.setHost(host);
 
-	    fetch(this.getUrl('auth/login', {email: email, pwd: pwd}), {method: 'POST'})
-	      .then((response) => response.json())
-	      .then(function(ret) {
-	      	if(Common.isOk(ret)) {
+		this.post('auth/login', {email: email, pwd: pwd}, function(ret) {
+			if(ret) {
 				ret.Pwd = pwd;
 				ret['Host'] = Evt.leanoteUrl;
 				User.setCurUser(ret);
 				callback && callback(ret);
 			} else {
-				// console.log('log failed');
-				callback && callback(false);
-			}
-	      })
-	      .catch((err) => {
-	        console.log(err);
-	        callback(false);
-	      })
-	      .done();
-
-	    /*
-
-		// log({emai: email, pwd: pwd});
-		// console.log(this.getUrl('auth/login', {email: email, pwd: pwd}));
-		// console.log('????????????')
-		needle.post(this.getUrl('auth/login'), {email: email, pwd: pwd}, {timeout: 10000}, function(error, response) {
-			me.checkError(error, response);
-			if(error) {
-				return callback && callback(false);
-			}
-			// needle.get('http://localhost/phpinfo.php?email=xx', {emai: email, pwd: pwd}, function(error, response) {
-			var ret = response.body;
-			// 登录成功, 保存token
-			// console.log('login ret');
-			// console.log(ret);
-			if(Common.isOk(ret)) {
-				ret.Pwd = pwd;
-				ret['Host'] = Evt.leanoteUrl;
-				User.setCurUser(ret);
-				callback && callback(ret);
-			} else {
-				// console.log('log failed');
 				callback && callback(false);
 			}
 		});
-		*/
+	},
 
-	},
-	post: function() {
-		var me = this;
-		var options = {
-			headers: { 'X-Custom-Header': 'Bumbaway atuna' }
-		}
-		// you can pass params as a string or as an object.
-		needle.post(me.getUrl('auth/login'), 'foo=bar', options, function(err, resp) {
-			var ret = resp.body;
-			log(ret);
-		});	
-	},
-	// get图片
-	getImageTest: function(callback) {
-		needle.get('http://localhost:9000/images/logo.png', function(err, resp) {
-			// log(resp.body);
-			/*
-			{ 'accept-ranges': 'bytes',
-			  'content-disposition': 'inline; filename="logo.png"',
-			  'content-length': '8583',
-			  'content-type': 'image/png',
-			  date: 'Mon, 19 Jan 2015 15:01:47 GMT',
-  			*/
-			// log(resp.headers);
-			fs.writeFile('/Users/life/Desktop/aa.png', resp.body);
-		});
-	},
-	// 测试
-	uploadImage: function() {
-		var data = {
-			foo: 'bar',
-			cc: [1,2,3,3],
-			dd: {name: 'life', age: 18},
-			image: { file: '/Users/life/Desktop/imageplus.png', content_type: 'image/png' }
-		}
-		needle.post('http://localhost/phpinfo.php', data, { multipart: true }, function(err, resp, body) {
-			// needle will read the file and include it in the form-data as binary
-			console.log(resp.body);
-		});
-	},
+	// ===================
+	// 获取型接口
+	// ===================
+	
+	// 获取需要同步的笔记本
 	getSyncNotebooks: function(afterUsn, maxEntry, callback) {
 		var me = this;
-		var url = this.getUrl('notebook/getSyncNotebooks', {afterUsn: afterUsn, maxEntry: maxEntry});
-		// console.log(url);
-		needle.get(url, 
-				function(error, response) {
-			me.checkError(error, response);
-			if(error) {
-				console.log(error);
-				return callback && callback(false);
-			}
-			var ret = response.body;
+		this.get('notebook/getSyncNotebooks', {afterUsn: afterUsn, maxEntry: maxEntry}, function(ret) {
+			console.log('notebook/getSyncNotebooks');
 			console.log(ret);
-			console.log(response);
-			if(Common.isOk(ret)) {
-				callback && callback(ret);
-			} else {
-				callback && callback(false);
-			}
-		});	
+			callback && callback(ret);
+		});
 	},
 	getSyncNotes: function(afterUsn, maxEntry, callback) {
 		var me = this;
 		var url = this.getUrl('note/getSyncNotes', {afterUsn: afterUsn, maxEntry: maxEntry});
-		log(url);
-		needle.get(url, function(error, response) {
-			me.checkError(error, response);
-			if(error) {
-				console.log('note/getSyncNotes');
-				console.log(error);
-				return callback && callback(false);
-			}
-			var ret = response.body;
-			if(Common.isOk(ret)) {
-				callback && callback(ret);
-			} else {
-				callback && callback(false);
-			}
-		});	
+		console.log(url);
+		this.get('note/getSyncNotes', {afterUsn: afterUsn, maxEntry: maxEntry}, function(ret) {
+			console.log('note/getSyncNotes');
+			console.log(ret);
+			callback && callback(ret);
+		});
 	},
 	getSyncTags: function(afterUsn, maxEntry, callback) {
 		var me = this;
 		var url = this.getUrl('tag/getSyncTags', {afterUsn: afterUsn, maxEntry: maxEntry});
-		log(url);
-		needle.get(url, function(error, response) {
-			me.checkError(error, response);
-			if(error) {
-				console.log('tag/getSyncTags');
-				console.log(error);
-				return callback && callback(false);
-			}
-			var ret = response.body;
+		console.log(url);
+
+		this.get('tag/getSyncTags', {afterUsn: afterUsn, maxEntry: maxEntry}, function(ret) {
+			console.log('tag/getSyncTags');
 			console.log(ret);
-			if(Common.isOk(ret)) {
-				callback && callback(ret);
-			} else {
-				callback && callback(false);
-			}
-		});	
+			callback && callback(ret);
+		});
 	},
+
+	// 获取服务端usn状态
+	// 要考虑重发
 	getLastSyncState: function(callback) {
 		var me = this;
 		var url = this.getUrl('user/getSyncState');
 		console.log(url);
+	    
+	    this.get('user/getSyncState', {afterUsn: afterUsn, maxEntry: maxEntry}, function(ret) {
+			console.log('user/getSyncState');
+			console.log(ret);
+			callback && callback(ret);
+		});
+
+	    /*
 		needle.get(url, {timeout: 10000}, function(error, response) {
 			// console.log('user/getSyncState ret');
 			me.checkError(error, response);
@@ -262,30 +211,21 @@ var Api = {
 			} else {
 				callback && callback(false);
 			}
-		});	
+		});
+		*/
 	},
+
 	// 获取笔记内容, 获取之后保存到笔记中
 	getNoteContent: function(noteId, callback) {
 		var me = this;
 		var url = this.getUrl('note/getNoteContent', {noteId: noteId});
 		console.log(url);
-		needle.get(url, function(error, response) {
-			me.checkError(error, response);
-			if(error) {
-				log(error);
-				return callback && callback(false);
-			}
-			var ret = response.body;
-			log('--------')
-			log(ret);
-			if(Common.isOk(ret)) { // {Content: 'xx', NoteId: 'xxx'}
-				// Note.updateNoteContentForce(noteId, ret.Content, function() {
-				callback && callback(ret);
-				// });
-			} else {
-				callback && callback(false);
-			}
-		});	
+		
+		this.get('note/getNoteContent', {noteId: noteId}, function(ret) {
+			console.log('note/getNoteContent');
+			console.log(ret);
+			callback && callback(ret);
+		});
 	},
 
 	// TODO
@@ -340,6 +280,7 @@ var Api = {
 	},
 
 	// 获取附件
+	// TODO
 	// FileService调用
 	getAttach: function(serverFileId, callback) {
 		var me = this;
@@ -402,6 +343,10 @@ var Api = {
 			}
 		});
 	},
+
+	// ==================
+	// 操作型接口
+	// ==================
 
 	//------------
 	// 笔记本操作

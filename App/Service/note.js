@@ -148,7 +148,7 @@ var Note = {
 					// console.log(updates);
 
 					// Set an existing field's value 
-					Notes.update({NoteId: noteOrContent.NoteId}, { $set: updates }, {}, function (err, numReplaced) { 
+					Notes.update({NoteId: noteOrContent.NoteId}, updates, {}, function (err, numReplaced) { 
 						if(err) {
 							callback && callback(false);
 						} else {
@@ -174,7 +174,7 @@ var Note = {
 					return callback && callback(true);
 				}
 				// 更新, 设置isDirty
-				Notes.update({NoteId: noteId}, { $set: {IsBlog: isBlog, IsDirty: true} }, {}, function (err, numReplaced) { 
+				Notes.update({NoteId: noteId}, {IsBlog: isBlog, IsDirty: true}, {}, function (err, numReplaced) { 
 					return callback && callback(true);
 				});
 			} else {
@@ -203,7 +203,7 @@ var Note = {
 			else {
 				var histories = history.Histories;
 				histories.push(content);
-				db.noteHistories.update({_id: noteId}, {$set: {Histories: histories, "UpdatedTime": new Date()}});
+				db.noteHistories.update({_id: noteId}, {Histories: histories, "UpdatedTime": new Date()});
 			}
 		});
 	},
@@ -293,7 +293,7 @@ var Note = {
 		var userId = User.getCurActiveUserId();
 		Notes.update(
 			{UserId: userId, IsTrash: true}, 
-			{$set: {LocalIsDelete: true, IsDirty: true}}, 
+			{LocalIsDelete: true, IsDirty: true}, 
 			{multi: true}, 
 			function(err, n) {
 				// Web.alertWeb(n);
@@ -307,7 +307,7 @@ var Note = {
 			if(!note) {
 				callback(false);
 			}
-			Notes.update({NoteId: noteId}, {$set: {IsTrash: true, IsDirty: true}}, function(err, n) {
+			Notes.update({NoteId: noteId}, {IsTrash: true, IsDirty: true}, function(err, n) {
 				if(err || !n) {
 					callback(false);
 				} else {
@@ -335,7 +335,7 @@ var Note = {
 
 				// TODO 删除附件
 
-				Notes.update({_id: note._id}, {$set: {IsDirty: true, LocalIsDelete: true}}, function(err, n) {
+				Notes.update({_id: note._id}, {IsDirty: true, LocalIsDelete: true}, function(err, n) {
 					if(n) {
 						// 如果有tags, 则重新更新tags' count
 						me.updateTagCount(note.Tags);
@@ -366,7 +366,7 @@ var Note = {
 				var to = !note.Star;
 				var preNotebookId = note.NotebookId;
 				note.NotebookId = notebookId;
-				Notes.update({_id: note._id}, {$set: {NotebookId: notebookId, IsTrash: false, LocalIsDelete: false, UpdatedTime: new Date()}}, function(err, n) {
+				Notes.update({_id: note._id}, {NotebookId: notebookId, IsTrash: false, LocalIsDelete: false, UpdatedTime: new Date()}, function(err, n) {
 					// 重新统计
 					Notebook.reCountNotebookNumberNotes(preNotebookId);
 					Notebook.reCountNotebookNumberNotes(notebookId);
@@ -384,7 +384,7 @@ var Note = {
 		me.getNote(noteId, function(note) {
 			if(note) {
 				var to = !note.Star;
-				Notes.update({_id: note._id}, {$set: {Star: to, UpdatedTime: new Date()}});
+				Notes.update({_id: note._id}, {Star: to, UpdatedTime: new Date()});
 				callback(true, to);
 			}
 		});
@@ -392,7 +392,7 @@ var Note = {
 
 	conflictIsFixed: function(noteId) {
 		var me = this;
-		Notes.update({NoteId: noteId}, {$set: {ConflictNoteId: ""}});
+		Notes.update({NoteId: noteId}, {ConflictNoteId: ""});
 	},
 
 	// 笔记本下是否有笔记
@@ -466,7 +466,7 @@ var Note = {
 
 		content = me.fixNoteContent(content);
 
-		Notes.update({NoteId: noteId}, { $set: {Content: content, InitSync: false, IsContentDirty: false} }, {}, function (err, numReplaced) { 
+		Notes.update({NoteId: noteId},  {Content: content, InitSync: false, IsContentDirty: false} , {}, function (err, numReplaced) { 
 			if(err) {
 				log(err);
 				callback && callback(false);
@@ -786,7 +786,7 @@ var Note = {
 				delete note['UpdatedTime'];
 				delete note['CreatedTime'];
 
-				Notes.update({NoteId: note.NoteId}, {$set: note}, {}, function (err, cnt) { // Callback is optional
+				Notes.update({NoteId: note.NoteId}, note, {}, function (err, cnt) { // Callback is optional
 					console.log('re:');
 					console.log(err);
 					console.log(cnt);
@@ -875,7 +875,7 @@ var Note = {
 			delete note['UpdatedTime'];
 			delete note['CreatedTime'];
 
-			Notes.update({NoteId: note.NoteId}, {$set: note}, function(err, n) {
+			Notes.update({NoteId: note.NoteId}, note, function(err, n) {
 				if(err || !n) {
 					log('updateNoteForceForSendChange err');
 					log(err);
@@ -903,7 +903,7 @@ var Note = {
 
 		Notebook.getNotebookIdByServerNotebookId(note.NotebookId, function(localNotebookId) {
 			note['NotebookId'] = localNotebookId;
-			Notes.update({NoteId: note.NoteId}, {$set: note}, {}, function (err, cnt) {   // Callback is optional
+			Notes.update({NoteId: note.NoteId}, note, {}, function (err, cnt) {   // Callback is optional
 				if(err) {
 					console.log(err);
 					callback && callback(false);
@@ -1319,17 +1319,17 @@ var Note = {
 
 	// 在send delete笔记时成功
 	setNotDirty: function(noteId) {
-		Notes.update({NoteId: noteId}, {$set: {IsDirty: false}})
+		Notes.update({NoteId: noteId}, {IsDirty: false})
 	},
 	removeNote: function(noteId) {
 		Notes.remove({NoteId: noteId});
 	},
 	// 在send delete笔记时有冲突, 设为不删除
 	setNotDirtyNotDelete: function(noteId) {
-		Notes.update({NoteId: noteId}, {$set:{IsDirty: false, LocalIsDelete: false}})
+		Notes.update({NoteId: noteId}, {IsDirty: false, LocalIsDelete: false})
 	},
 	setIsNew: function(noteId) {
-		Notes.update({NoteId: noteId}, {$set:{LocalIsNew: true, IsDirty: true}})
+		Notes.update({NoteId: noteId}, {LocalIsNew: true, IsDirty: true})
 	},
 
 	//----------------------------------
@@ -1352,7 +1352,7 @@ var Note = {
 			for(var i in attachs) {
 				t.push(attachs[i]);
 			}
-			Notes.update({NoteId: noteId}, {$set: {Attachs: t, IsDirty: true, UpdatedTime: new Date()}} );
+			Notes.update({NoteId: noteId}, {Attachs: t, IsDirty: true, UpdatedTime: new Date()} );
 		});
 	},
 
@@ -1530,7 +1530,7 @@ var Note = {
 					// attach.Title = filename;
 					// attach.Filename = filename;
 
-					Notes.update({_id: note._id}, {$set: {Attachs: attachs}}, function() {
+					Notes.update({_id: note._id}, {Attachs: attachs}, function() {
 						callback(true, attachs, attach);
 					});
 					break;
@@ -1589,7 +1589,7 @@ var Note = {
 					note.Tags = tags;
 					note.IsDirty = true;
 					updates[note.NoteId] = note;
-					Notes.update({_id: note._id}, {$set: {Tags: tags, IsDirty: true}}, function(err) {
+					Notes.update({_id: note._id}, {Tags: tags, IsDirty: true}, function(err) {
 						console.log("??");
 						console.log(err);
 						callback(updates);

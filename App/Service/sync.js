@@ -1,18 +1,18 @@
 // 来自desktop-app
 // 待修改
+var db = require('../DB/Sqlite');
 
-var db = require('db');
 var async = require('async');
-var Common = require('common');
-var User = require('user');
-var Tag = require('tag');
-var Tags = db.tags;
-var needle = require('needle');
-var fs = require('fs');
-var Api = require('api');
-var Notebook = require('notebook');
-var Note = require('note');
-var Web = require('web');
+
+var Common = require('./common');
+var User = require('./user');
+var Tag = require('./tag');
+
+var Api = require('./api');
+
+var Notebook = require('./notebook');
+var Note = require('./note');
+var Web = require('./web');
 
 function log(o) {
 	console.log(o);
@@ -374,7 +374,7 @@ var Sync = {
 				me._syncInfo.note.ok = false;
 				me._syncInfo.note.msg = "cann't get all chunks";
 				console.log(notes);
-				console.log('eeeeeeeeeeeeeeeeeerrror')
+				console.log('eeeeeeeeeeeeeeeeeerrror cannt get all chunks')
 				callback && callback(false);
 			}
 		});
@@ -539,8 +539,6 @@ var Sync = {
 		});
 	},
 
-	_notebookWeb: null,
-	_noteWeb: null,
 	// 处理冲突
 	fixConflicts: function(callback) {
 		var me = this;
