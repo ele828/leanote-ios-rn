@@ -1,11 +1,11 @@
 // 来自desktop-app
 // 待修改
 
-var db = require('db');
-var Common = require('common');
-var User = require('user');
+var db = require('../DB/Sqlite');
+var Common = require('./common');
+var User = require('./user');
 // var Note = require('note');
-var Web = require('web');
+var Web = require('./web');
 var Tags = db.tags;
 /*
 TagId
@@ -27,7 +27,7 @@ var Tag = {
 		Tags.findOne({UserId: userId, Tag: title}, function(err, tag) {
 			// 存在, 则更新该tag下的笔记数量
 			// 已存的, 不更新IsDirty
-			var Note = require('note');
+			var Note = require('./note');
 			if(!err && tag) {
 				Note.countNoteByTag(title, function(cnt) {
 					tag.Count = cnt;

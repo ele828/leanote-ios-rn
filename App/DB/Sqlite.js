@@ -201,7 +201,6 @@ BaseDb.prototype._set = function(data) {
 // db.notes.update({NoteId: "life"}, {"Title": "xx"}, function(err, effectedNum) {})
 BaseDb.prototype.update = function(query, set, option, callback) {
   var me = this;
-  var _db = dbs[me.dbname];
 
   var where = me._where(query);
   var setsAndValues = me._set(set);
@@ -288,7 +287,7 @@ BaseDb.prototype._find = (function() {
   // var me = this;
   function F(upper, query, rowCallback, afterCallback) {
     me = upper;
-    this.dbname = dbname;
+    this.dbname = upper.dbname;
     this.query = query;
     this.rowCallback = rowCallback;
     this.afterCallback = afterCallback;
@@ -337,6 +336,7 @@ BaseDb.prototype._find = (function() {
     }
 
     console.log(sql);
+    var rows = [];
 
     db.executeSQL(sql, [], function rowCb(row) {
       if(rowCallback) {
@@ -388,9 +388,6 @@ BaseDb.prototype.count = function(query, callback) {
 
   var rows = [];
   db.executeSQL(sql, [], function rowCb(row) {
-    if(rowCallback) {
-      rowCallback(row);
-    }
     rows.push(row);
   }, function afterCb(err) {
     if(err) {

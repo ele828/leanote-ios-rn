@@ -1,12 +1,13 @@
 // 来自desktop-app
 // 待修改
 
-var db = require('db');
 var async = require('async');
-var User = require('user');
+var db = require('../DB/Sqlite');
+var User = require('./user');
+var Common = require('./common');
+var Web = require('./web');
+
 var NB = db.notebooks;
-var Common = require('common');
-var Web = require('web');
 
 function log(o) {console.log(o);}
 
@@ -187,7 +188,7 @@ var Notebook = {
 	// 删除笔记本
 	deleteNotebook: function(notebookId, callback) {
 		// 先检查是否有笔记, 如果有, 则不准删除
-		var Note = require('note');
+		var Note = require('./note');
 		Note.hasNotes(notebookId, function(has) {
 			if(has) {
 				callback(false, 'This notebook has notes, please delete notes firstly.');

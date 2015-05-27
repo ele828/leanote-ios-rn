@@ -1,9 +1,11 @@
 // 来自desktop-app
 // 待修改
 
-var Evt = require('evt');
-var db = require('db');
-var fs = require('fs');
+var db = require('../DB/Sqlite');
+
+var Evt = require('./evt');
+
+var fs = {}; // require('fs');
 
 function log(o) {
 	console.log(o);
@@ -48,20 +50,23 @@ User = {
 	// 不同host的userId可能一样, 潜在的bug
 	saveCurUser: function(user, callback) {
 		// 当前用户是否在数据库中
-		db.users.count({_id: user.UserId}, function(err, count) {
-			if(err || count == 0) {
+		console.log('save cur User');
+		db.users.count({_id: user.UserId}, function(count) {
+			if(!count) {
+				console.log('当前用户不在数据库中, 添加一个');
 				// 添加一个
 				user['_id'] = user.UserId;
 				user['IsActive'] = true;
 				db.users.insert(user, function(err, doc) {
-					log(err);
+					console.log(err);
 				});
 			} else {
 				user.IsActive = true;
 				delete user['Ok'];
-				db.users.update({_id: user.UserId}, {$set: user}, function(err, cnt) {
+				console.log('当前用户在数据库中, 更新下');
+				db.users.update({_id: user.UserId}, user, function(err, cnt) {
 					if(err || cnt == 0) {
-						log(err);
+						console.log(err);
 						callback && callback(false);
 					} else {
 						callback && callback(true);
@@ -94,9 +99,9 @@ User = {
 		me.getG(function(g) {
 			me.g = g;
 
-			db.users.findOne({IsActive: true}, function(err, user) {
-				if(err || !user || !user.UserId) {
-					console.log('不存在');
+			db.users.findOne({IsActive: true}, function(user) {
+				if(!user || !user.UserId) {
+					console.log('用户不存在');
 					callback && callback(false);
 				} else {
 					// me.setCurUser(doc);
@@ -146,6 +151,7 @@ User = {
 
 	setUserDataPath: function(userId) {
 		var me = this;
+		return;
 		// 判断是否存在, 不存在则创建dir
 		try {
 			fs.mkdirSync(Evt.getBasePath() + '/data/');

@@ -23,12 +23,15 @@ var Base = require("../Common/Base");
 var Tools = require("../Common/Tools");
 var Spinner = require("../Components/Spinner");
 
-var DB = require("../DB/Sqlite");
+var UserService = require('../Service/user');
+var ApiService = require('../Service/api');
 
 // sqlite
 
 var LoginView = React.createClass({
   _doLogin: function() {
+    var me = this;
+
     AsyncStorage.clear();
     this.setState({startLogin: true});
 
@@ -69,6 +72,50 @@ var LoginView = React.createClass({
     formData.append('email', email);
     formData.append('pwd', pwd);
     */
+   
+    ApiService.auth(email, pwd, host, function(res) {
+      // 用户名或密码错误
+      if(!res) {
+        console.error("用户名或密码错误!");
+        me.setState({startLogin: false});
+        Base.showMsg("登录失败", "用户名或密码错误!");
+        return;
+      }
+
+      // 登录成功
+      // 这部分可不要了 TODO
+      if(res["Ok"] === true) {
+        var token  = res["Token"],
+            userId = res["UserId"],
+            email  = res["Email"];
+
+        // 储存用户信息以及Token
+        AsyncStorage.setItem("User:token", token)
+          .catch((err)=>{
+            me.setState({startLogin: false});
+            Base.showMsg("系统错误", "登录失败，请重试！");
+          });
+
+        AsyncStorage.setItem("User:id", userId)
+          .catch((err)=>{
+            me.setState({startLogin: false});
+            Base.showMsg("系统错误", "登录失败，请重试！");
+          });
+
+        AsyncStorage.setItem("User:email", email)
+          .catch((err)=>{
+            me.setState({startLogin: false});
+            Base.showMsg("系统错误", "登录失败，请重试！");
+          });
+
+        // 跳转到主界面
+        me.setState({startLogin: false});
+        me.props.navigator.replace({ id: 'home' });
+        return;
+      }
+    });
+
+    return;
 
     // https://github.com/facebook/react-native/blob/62b90cfcc5c254076541ed8dc6372e16444b41ba/Libraries/Fetch/fetch.js
     var data  = "?email=" + encodeURI(email) + "&pwd=" + encodeURI(pwd);
@@ -99,6 +146,8 @@ var LoginView = React.createClass({
           var token  = res["Token"],
               userId = res["UserId"],
               email  = res["Email"];
+
+
 
           // 储存用户信息以及Token
           AsyncStorage.setItem("User:token", token)
@@ -141,8 +190,21 @@ var LoginView = React.createClass({
     this.props.navigator.push({ id: 'register' });
   },
 
+  // 判断用户是否已经登录, 如果登录了, 则直接到主页
   componentDidMount: function() {
-    // 判断用户是否已经登录, 如果登录了, 则直接到主页
+    var me = this;
+
+    // 使用sqlite
+    UserService.init(function(user) {
+      if(user) {
+          me.setState({logined: true});
+          me.props.navigator.replace({ id: 'home' });
+        } else {
+          me.setState({logined: false});
+        }
+    });
+
+    /*
     // AsyncStorage.clear();
     AsyncStorage.getItem("User:token")
       .then((token)=>{
@@ -156,7 +218,7 @@ var LoginView = React.createClass({
       .catch((err)=>{
         this.setState({logined: false});
       });
-
+    */
     
   },
 
