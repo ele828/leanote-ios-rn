@@ -44,6 +44,7 @@ var RefreshButton = require("../Components/RefreshButton");
 
 var SyncService = require('../Service/sync');
 var UserService = require('../Service/user');
+var NoteService = require('../Service/note');
 
 var props = null;
 var AllNoteList = React.createClass({
@@ -102,6 +103,14 @@ var AllNoteList = React.createClass({
   },
 
   _loadNotesFromStorage: function() {
+    var me = this;
+    NoteService.getNotes(null, function(notes) {
+      // console.log(notes);
+      me.setState( {  notes : notes });
+      me.setState({notesLoaded: true});
+    });
+    return;
+
     Storage.getAllNotes()
       .then((notes)=>{
         return JSON.parse(notes);
@@ -116,7 +125,7 @@ var AllNoteList = React.createClass({
   // 增量同步之
   // 应当先增量同步笔记本
   _fetchSyncNotes: function() {
-
+    var me = this;
     UserService.init(function(user) {
       if(!user.LastSyncUsn) {
         console.log('需要全量同步!!');
@@ -126,6 +135,8 @@ var AllNoteList = React.createClass({
       else {
         // 增量同步
         SyncService.incrSync();
+
+        me.refreshed = true;
       }
     });
 

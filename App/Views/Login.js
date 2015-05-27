@@ -26,8 +26,6 @@ var Spinner = require("../Components/Spinner");
 var UserService = require('../Service/user');
 var ApiService = require('../Service/api');
 
-// sqlite
-
 var LoginView = React.createClass({
   _doLogin: function() {
     var me = this;

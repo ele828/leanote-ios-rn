@@ -255,10 +255,11 @@ var Note = {
 			query['IsTrash'] = true;
 		}
 		Notes.find(query).sort({'UpdatedTime': -1}).exec(function(err, notes) {
+			// console.log('error ' + err);
 			if(err) {
-				log(err);
 				return callback && callback(false);
 			}
+			// console.log(notes);
 			return callback && callback(notes);
 		});
 	},

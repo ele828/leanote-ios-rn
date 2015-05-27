@@ -337,7 +337,6 @@ BaseDb.prototype._find = (function() {
 
     console.log(sql);
     var rows = [];
-
     db.executeSQL(sql, [], function rowCb(row) {
       rowCallback && rowCallback(row);
       rows.push(row);
