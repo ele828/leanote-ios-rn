@@ -94,6 +94,7 @@ var Api = {
 
 	// get
 	get: function(url, param, callback) {
+		console.log(this.getUrl(url, param));
 		fetch(this.getUrl(url, param), {method: 'GET'})
 	      .then((response) => response.json())
 	      .then(function(ret) {
@@ -167,7 +168,7 @@ var Api = {
 		console.log(url);
 		this.get('note/getSyncNotes', {afterUsn: afterUsn, maxEntry: maxEntry}, function(ret) {
 			console.log('note/getSyncNotes');
-			console.log(ret);
+			ret && console.log(ret.length);
 			callback && callback(ret);
 		});
 	},
@@ -187,10 +188,8 @@ var Api = {
 	// 要考虑重发
 	getLastSyncState: function(callback) {
 		var me = this;
-		var url = this.getUrl('user/getSyncState');
-		console.log(url);
 	    
-	    this.get('user/getSyncState', {afterUsn: afterUsn, maxEntry: maxEntry}, function(ret) {
+	    this.get('user/getSyncState', {}, function(ret) {
 			console.log('user/getSyncState');
 			console.log(ret);
 			callback && callback(ret);
@@ -223,7 +222,7 @@ var Api = {
 		
 		this.get('note/getNoteContent', {noteId: noteId}, function(ret) {
 			console.log('note/getNoteContent');
-			console.log(ret);
+			// console.log(ret);
 			callback && callback(ret);
 		});
 	},

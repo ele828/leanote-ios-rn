@@ -118,15 +118,15 @@ var AllNoteList = React.createClass({
   _fetchSyncNotes: function() {
 
     UserService.init(function(user) {
-      if(!user.Usn) {
+      if(!user.LastSyncUsn) {
         console.log('需要全量同步!!');
-
         SyncService.fullSync(function() {
-
-
         });
       }
-
+      else {
+        // 增量同步
+        SyncService.incrSync();
+      }
     });
 
     return;

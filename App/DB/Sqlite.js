@@ -285,13 +285,13 @@ BaseDb.prototype._find = (function() {
   var me;
 
   // var me = this;
-  function F(upper, query, rowCallback, afterCallback) {
+  function F(upper, query, afterCallback, rowCallback) {
     me = upper;
     this.dbname = upper.dbname;
     this.query = query;
     this.rowCallback = rowCallback;
     this.afterCallback = afterCallback;
-    if(rowCallback) {
+    if(afterCallback) {
       this.exec(afterCallback, rowCallback);
     }
   }
@@ -339,16 +339,12 @@ BaseDb.prototype._find = (function() {
     var rows = [];
 
     db.executeSQL(sql, [], function rowCb(row) {
-      if(rowCallback) {
-        rowCallback(row);
-      }
+      rowCallback && rowCallback(row);
       rows.push(row);
+      // console.log('???');
     }, function afterCb(err) {
-      if(err) {
-        afterCallback && afterCallback(err, false);
-      } else {
-        afterCallback && afterCallback(err, rows);
-      }
+      // console.log('aftercb...' + afterCallback);
+      afterCallback && afterCallback(err, rows);
     });
   }
   return F;
@@ -357,6 +353,7 @@ BaseDb.prototype._find = (function() {
 // 查找
 BaseDb.prototype.find = function(query, afterCallback, rowCallback) {
   var me = this;
+  console.log(query);
   return new this._find(this, query, afterCallback, rowCallback);
 };
 
@@ -366,7 +363,7 @@ BaseDb.prototype.findOne = function(query, callback) {
   var q = new this._find(this, query);
   q.limit(1).exec(
   function(err, rows) {
-    if(err, rows) {
+    if(!err && rows) {
       var rows = me.fixRows(rows);
       console.log(rows + '>>>>>>>>>>>>>>>>>');
       callback && callback(err, rows[0]);

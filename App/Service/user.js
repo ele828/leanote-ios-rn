@@ -77,7 +77,7 @@ User = {
 		// console.log(".........");
 		// console.log(user);
 		// 设值其它用户为非active
-		db.users.update({_id: {$ne: user.UserId}}, {$set: {IsActive: false}}, {multi: true}, function(err, n) { 
+		db.users.update({_id: {$ne: user.UserId}}, {IsActive: false}, {multi: true}, function(err, n) { 
 			// console.log(err);
 			// console.log(n);
 		});
@@ -196,7 +196,7 @@ User = {
 	// 设为-1, 再刷新就会重新同步
 	fullSyncForce: function(callback) {
 		var me = this;
-		db.users.update({UserId: me.getCurActiveUserId()}, {$set: {LastSyncUsn: -1}}, function() {
+		db.users.update({UserId: me.getCurActiveUserId()}, {LastSyncUsn: -1}, function() {
 			callback && callback();
 		});
 	},
@@ -205,7 +205,7 @@ User = {
 	updateLastSyncState: function(callback) {
 		var me = this;
 		if(!Api) {
-			Api = require('api');
+			Api = require('./api');
 		}
 		Api.getLastSyncState(function(state) {
 			if(state) {
@@ -213,7 +213,7 @@ User = {
 				console.log(state);
 				me.LastSyncUsn = state.LastSyncUsn;
 				me.LastSyncTime = state.LastSyncTime;
-				db.users.update({UserId: me.getCurActiveUserId()}, {$set: state});
+				db.users.update({UserId: me.getCurActiveUserId()}, state);
 			}
 			callback();
 		});
@@ -228,7 +228,7 @@ User = {
 	updateLastSyncUsn: function(usn) {
 		var me = this;
 		me.LastSyncUsn = usn;
-		db.users.update({UserId: me.getCurActiveUserId()}, {$set: {LastSyncUsn: usn}});
+		db.users.update({UserId: me.getCurActiveUserId()}, {LastSyncUsn: usn});
 	},
 
 	// 全局配置
@@ -244,7 +244,7 @@ User = {
 	},
 	// data = {Theme, NotebookWidth, NoteListWidth, MdEditorWidth, Version};
 	updateG: function(data, callback) {
-		db.g.update({_id: '1'}, {$set: data}, {upsert: true}, function() {
+		db.g.update({_id: '1'}, data, {upsert: true}, function() {
 			callback && callback();
 		});
 	},
@@ -265,7 +265,7 @@ User = {
 	saveCurState: function(state, callback) {
 		var me = this;
 		state = state || {};
-		db.users.update({_id: me.getCurActiveUserId()}, {$set: {State: state}}, function() {
+		db.users.update({_id: me.getCurActiveUserId()}, {State: state}, function() {
 			callback && callback();
 		});
 	}

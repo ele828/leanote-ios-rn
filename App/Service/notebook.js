@@ -38,7 +38,7 @@ function sortNotebooks(notebooks) {
 	notebooks.sort(function(a, b) {
 		return a.Seq - b.Seq;
 	});
-	for(var i in notebooks) {
+	for(var i = 0; i < notebooks.length; ++i) {
 		var notebook = notebooks[i];
 		if(notebook.Subs.length > 0) {
 			sortNotebooks(notebook.Subs);
@@ -77,7 +77,7 @@ var Notebook = {
 		// 整理成层级关系, 并排序
 		// 1. 建立map
 		var notebooksMap = {};
-		for(var i in notebooks) {
+		for(var i = 0; i < notebooks.length; ++i) {
 			var notebook = notebooks[i];
 			notebook.Subs = [];
 			notebooksMap[notebook.NotebookId] = notebook;
@@ -143,9 +143,8 @@ var Notebook = {
 	// 修改笔记本标题
 	updateNotebookTitle: function(notebookId, title, callback) {
 		NB.update({NotebookId: notebookId}, 
-			{$set: 
-				{Title: title, IsDirty: true, UpdatedTime: new Date()}
-			}, function(err, n) {
+			{Title: title, IsDirty: true, UpdatedTime: new Date()}
+			, function(err, n) {
 			callback(true);
 		});
 	},
@@ -172,9 +171,7 @@ var Notebook = {
 				var siblingNotebookId = siblingNotebookIds[i];
 				console.log('siblingNotebookId: ' + siblingNotebookId);
 				NB.update({NotebookId: siblingNotebookId}, 
-					{$set: 
-						{ParentNotebookId: parentNotebookId, Seq: i, IsDirty: true, UpdatedTime: new Date()}
-					}
+					{ParentNotebookId: parentNotebookId, Seq: i, IsDirty: true, UpdatedTime: new Date()}
 				);
 			}
 		});
@@ -193,7 +190,9 @@ var Notebook = {
 			if(has) {
 				callback(false, 'This notebook has notes, please delete notes firstly.');
 			} else {
-				NB.update({NotebookId: notebookId}, {$set: {LocalIsDelete: true, IsDirty: true, UpdatedTime: new Date()}}, function(err, n) {
+				NB.update({NotebookId: notebookId},
+					{LocalIsDelete: true, IsDirty: true, UpdatedTime: new Date()}
+					, function(err, n) {
 					callback(true);
 				});
 			}
@@ -222,7 +221,7 @@ var Notebook = {
 				return;
 			}
 			Web.updateNotebookNumberNotes(notebookId, count);
-			NB.update({NotebookId: notebookId}, {$set: {NumberNotes: count}}, {})
+			NB.update({NotebookId: notebookId}, {NumberNotes: count}, {})
 		});
 	},
 
@@ -343,7 +342,7 @@ var Notebook = {
 			notebook.ParentNotebookId = parentNotebookId;
 			notebook.ServerNotebookId = notebook.NotebookId;
 			notebook.NotebookId = notebookLocal.NotebookId;
-			NB.update({ServerNotebookId: serverNotebookId}, {$set: notebook}, {}, function (err, updates) {   // Callback is optional
+			NB.update({ServerNotebookId: serverNotebookId}, notebook, {}, function (err, updates) {   // Callback is optional
 				if(err) {
 					console.log(err);
 					callback && callback(false);
@@ -371,7 +370,7 @@ var Notebook = {
 			// console.log(notebook2);
 			// notebook2.Title  += " H-";
 			// multi, 因为历史原因, 导致大量重复notebookId的元素
-			NB.update({NotebookId: notebookId}, {$set: notebook}, {multi: true}, function (err, n) {
+			NB.update({NotebookId: notebookId}, notebook, {multi: true}, function (err, n) {
 				// console.log('updateNotebookForceForSendChange end' + notebookId + ' ' + n);
 				if(err) {
 					console.log(err);
@@ -428,6 +427,8 @@ var Notebook = {
 	// 2) 服务器替换之前
 	fixConflicts: function(notebookSyncInfo, callback) {
 		var me = this;
+
+		// IOS TODO
 		
 		// 处理冲突
 		var conflictNotebooks = notebookSyncInfo.conflicts || [];
@@ -458,7 +459,7 @@ var Notebook = {
 		// 服务器没有, 但是是发送更新的, 所以需要作为添加
 		if(notebookSyncInfo.changeNeedAdds) { 
 			var needAddNotebooks = notebookSyncInfo.changeNeedAdds;
-			for(var i in needAddNotebooks) {
+			for(var i = 0; i < needAddNotebooks.length; ++i) {
 				var notebook = needAddNotebooks[i];
 				me.setIsNew(notebook.NotebookId);
 			}
@@ -487,14 +488,14 @@ var Notebook = {
 
 	// 在send delete笔记时成功
 	setNotDirty: function(notebookId) {
-		NB.update({NotebookId: notebookId}, {$set:{IsDirty: false}})
+		NB.update({NotebookId: notebookId}, {IsDirty: false})
 	},
 	// 在send delete笔记时有冲突
 	setNotDirtyNotDelete: function(notebookId) {
-		NB.update({NotebookId: notebookId}, {$set:{IsDirty: false, LocalIsDelete: false}})
+		NB.update({NotebookId: notebookId}, {IsDirty: false, LocalIsDelete: false})
 	},
 	setIsNew: function(notebookId) {
-		NB.update({NotebookId: notebookId}, {$set:{LocalIsNew: true, IsDirty: true}})
+		NB.update({NotebookId: notebookId}, {LocalIsNew: true, IsDirty: true})
 	}
 };
 module.exports = Notebook;

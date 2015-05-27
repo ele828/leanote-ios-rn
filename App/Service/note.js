@@ -579,8 +579,12 @@ var Note = {
 
 	getNoteByServerNoteId: function(noteId, callback) {
 		var me = this;
+		console.log('llll>>lll');
 		Notes.find({ServerNoteId: noteId}, function(err, doc) {
 			// console.log(doc.length + '...');
+			console.log('haha>>lll');
+			console.log(err);
+			// console.log(doc);
 			if(doc.length > 1) {
 				console.error(doc.length + '. ..');
 			}
@@ -657,10 +661,14 @@ var Note = {
 		note.UpdatedTime = Common.goNowToDate(note.UpdatedTime);
 
 		// 附件操作
+		// TODO IOS
 		var files = note.Files || [];
 		var attachs = [];
 		for(var i in files) {
 			var file = files[i];
+			if (!file) {
+				continue;
+			}
 			if(file.IsAttach) { // LocalFileId, FileId
 				file.ServerFileId = file.FileId;
 				file.FileId = file.ServerFileId; // 弄成一样的, 只是没有Path
@@ -711,9 +719,10 @@ var Note = {
 		note.ContentIsDirty = false;
 
 		// 附件处理
+		// TODO IOS
 		var files = note.Files || [];
-		var attachsMap = [];
-		for(var i in files) {
+		var attachsMap = {};
+		for(var i = 0; i < files.length; ++i) {
 			var file = files[i];
 			if(file.IsAttach) { // LocalFileId, FileId
 				// 对于服务器上的, 只有FileId会传过来, 此时要与之前的做对比
@@ -736,7 +745,7 @@ var Note = {
 
 			// 得到要删除的
 			var needDeletes = [];
-			for(var i in everAttachs) {
+			for(var i = 0; i < everAttachs.length; ++i) {
 				var everAttach = everAttachs[i];
 				everAttachsMap[everAttach.ServerFileId] = everAttach;
 				if(!attachsMap[everAttach.ServerFileId]) {
@@ -775,12 +784,12 @@ var Note = {
 				note['NotebookId'] = localNotebookId;
 
 				console.log("updateNoteForce 后的")
-				console.log(note);
-				console.log(note.ServerNoteId + " " + note.IsDirty);
+				// console.log(note);
+				// console.log(note.ServerNoteId + " " + note.IsDirty);
 				
 				console.log('ever note');
-				console.log(everNote.NoteId);
-				console.log(everNote);
+				// console.log(everNote.NoteId);
+				// console.log(everNote);
 
 				// 不要服务器上的
 				delete note['UpdatedTime'];
@@ -1140,7 +1149,7 @@ var Note = {
 		var changeConflicts = noteSyncInfo.changeConflicts;
 		console.log('changeConflicts');
 		console.log(changeConflicts);
-		for(var i in changeConflicts) {
+		for(var i = 0; i < changeConflicts.length; ++i) {
 			(function(i) {
 
 				var note = changeConflicts[i]; // note是本地的note
@@ -1175,7 +1184,7 @@ var Note = {
 		// 服务器没有, 但是是发送更新的, 所以需要作为添加以后再send changes
 		if(noteSyncInfo.changeNeedAdds) { 
 			var needAddNotes = noteSyncInfo.changeNeedAdds;
-			for(var i in needAddNotes) {
+			for(var i = 0; i < needAddNotes.length; ++i) {
 				console.log('need add ');
 				var note = needAddNotes[i];
 				me.setIsNew(note.NoteId);
@@ -1405,6 +1414,9 @@ var Note = {
 			return;
 		}
 		for(var i in attachs) {
+			if(!attachs[i]) {
+				continue;
+			}
 			var path = attachs[i].Path;
 			if(path && path.indexOf(fileBasePath) > 0) {
 				try {
@@ -1421,14 +1433,15 @@ var Note = {
 	// 延迟1s
 	syncContentAndImagesAndAttachs: function(note, timeout) {
 		var me = this;
+		// return;
 		setTimeout(function() {
 			// 内容
-			console.log("syncContentAndImagesAndAttachs..................." + note.NoteId);
+			// console.log("syncContentAndImagesAndAttachs..................." + note.NoteId);
 			me.getNoteContent(note.NoteId, function(noteAndContent) { 
 				if(noteAndContent) {
 					console.log('sync content ' + note.NoteId + ' ok');
 					var content = noteAndContent.Content;
-					Web.contentSynced(note.NoteId, note.Content);
+					// Web.contentSynced(note.NoteId, note.Content);
 					// 图片
 					if(content) {
 						me.syncImages(content);
@@ -1438,9 +1451,11 @@ var Note = {
 				}
 			});
 
+			// TODO IOS
+			return;
 			// 附件
 			var attachs = note.Attachs || [];
-			for(var i in attachs) {
+			for(var i = 0; i < attachs.length; ++i) {
 				var attach = attachs[i];
 				me.downloadAttachFromServer(note.NoteId, attach.ServerFileId, attach.FileId);
 			}
@@ -1448,8 +1463,13 @@ var Note = {
 	},
 
 	// 同步图片
+	// TODO IOS
 	inSyncImage: {}, // 
 	syncImages: function(content) {
+
+		// 暂时不处理
+		return;
+
 		var me = this;
 		if(!content) {
 			return;
@@ -1522,7 +1542,7 @@ var Note = {
 				callback(false);
 			}
 			var attachs = note.Attachs;
-			for(var i in attachs) {
+			for(var i = 0; i < attachs.length; ++i) {
 				var attach = attachs[i];
 				if(attach.FileId == fileId) {
 					attach.ServerFileId = serverFileId;

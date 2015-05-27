@@ -355,8 +355,7 @@ var Sync = {
 		}
 
 		Api.getSyncNotes(afterUsn, me._noteMaxEntry, function(notes) {
-			console.log('syncNote---')
-			console.log(notes);
+			console.log('syncNote---: ' + notes.length)
 			if(Common.isOk(notes)) {
 				me._totalSyncNoteNum += notes.length;
 				// 证明可能还有要同步的
@@ -542,13 +541,14 @@ var Sync = {
 	// 处理冲突
 	fixConflicts: function(callback) {
 		var me = this;
+
 		var afterInfo = me._syncInfo;
 		log('处理冲突....');
 		log(me._syncInfo);
 		log(me._syncInfo.tag);
 		var tag = me._syncInfo.tag;
 
-		// 如果是incSync, 则要前端处理
+		// 如果是incrSync, 则要前端处理
 		if(me.incrSyncStart) {
 
 			Notebook.fixConflicts(me._syncInfo.notebook);
@@ -623,7 +623,7 @@ var Sync = {
 		User.getLastSyncState(function(lastSyncUsn, lastSyncTime) {
 			// 没有上次同步的时间, 则需要进行一次全量同步, 不可能会发生
 			if(!lastSyncUsn) {
-				console.error('getLastSyncState error!!');
+				console.log('getLastSyncState error!!');
 				me.setSyncFinished();
 				return;
 			}
@@ -632,7 +632,7 @@ var Sync = {
 			console.log('先从服务器上得到usn, 与本地的判断, 是否需要pull');
 			Api.getLastSyncState(function(serverState) {
 				if(!serverState) {
-					console.error('get Server LastSyncState error!!');
+					console.log('get Server - LastSyncState error!!');
 					me.setSyncFinished();
 					return;
 				}
