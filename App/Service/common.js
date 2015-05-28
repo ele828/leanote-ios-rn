@@ -30,12 +30,7 @@ var Common = {
 		this._uuid++;
 		return ((new Date()).getTime()) + '_' + this._uuid;
 	},
-	isWin: function() {
-		return process.platform.toLowerCase().indexOf('win') === 0;
-	},
-	isMac: function() {
-		return process.platform.toLowerCase().indexOf('mac') === 0;
-	},
+	
 	// 得到目录分隔符
 	getPathSep: function() {
 		// windows下

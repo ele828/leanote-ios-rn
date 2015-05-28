@@ -43,6 +43,7 @@ var Menu = require("../Components/SideMenu");
 
 module.exports = React.createClass({
   mixins: [tweenState.Mixin],
+
   firstRoute: {
     name: '所有笔记',
     data: {update: false, goNoteBooks: false, atHome: true, go: false},
@@ -50,6 +51,7 @@ module.exports = React.createClass({
     leftCorner: SideBarButton,
     rightCorner: RefreshButton
   },
+
   componentDidMount: function() {
     if(this.getTweeningValue('top') > 0) {
       this.tweenState('top', {
@@ -60,12 +62,13 @@ module.exports = React.createClass({
       });
     }
   },
+  
   getInitialState: function() {
     return {
       update: false,
       menuOpened: false,
       aboutOpened: false
-    }
+    };
   },
 
   // 处理从导航视图触发的动作
@@ -85,6 +88,7 @@ module.exports = React.createClass({
         break;
     }
   },
+
   // 弹出关于窗口
   _showAbout: function() {
     if( !this.state.aboutOpened ) {
@@ -97,6 +101,7 @@ module.exports = React.createClass({
       this.setState({aboutOpened: true});
     }
   },
+
   // 关闭关于窗口
   _hideAbout: function() {
     if(this.state.aboutOpened) {
@@ -109,14 +114,17 @@ module.exports = React.createClass({
       this.setState({aboutOpened: false});
     }
   },
+
   _siderbar: function() {
     this.refs["sideMenu"].openMenu();
   },
+
   _refreshNotes: function() {
     console.log('refresh');
     this.setState({update: true});
     this.firstRoute.data.update = true;
   },
+
   render: function() {
     return (
       <SideMenu menu={<Menu />} nav={this.props.navigator} customAction={this._handleAction} ref="sideMenu">

@@ -22,6 +22,14 @@ exports.formatDate = function (date, friendly) {
 
 };
 
+exports.extend = function(obj1, obj2) {
+  for(var i in obj2) {
+    if(obj2.hasOwnProperty(i)) {
+      obj1[i] = obj2[i];
+    }
+  }
+};
+
 exports.isValidUrl = function(url) {
   return /http(s*):\/\/.+/.test(url);
 }

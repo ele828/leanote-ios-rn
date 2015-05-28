@@ -7,6 +7,8 @@ var User = require('./user');
 var Common = require('./common');
 var Web = require('./web');
 
+var Tools = require('../Common/Tools');
+
 var NB = db.notebooks;
 
 function log(o) {console.log(o);}
@@ -49,28 +51,50 @@ function sortNotebooks(notebooks) {
 // 笔记本服务
 var Notebook = {
 
-	addNotebookTest: function() {
-		var doc = {
-			// _id: "xxxxx",
-			hello: 'world'
-		   , n: 5
-		   , today: new Date()
-		   , nedbIsAwesome: true
-		   , notthere: null
-		   , notToBeSaved: undefined  // Will not be saved
-		   , fruits: [ 'apple', 'orange', 'pear' ]
-		   , infos: { name: 'nedb' }
-		   };
-		console.log("save before")
-		NB.insert(doc, function (err, newDoc) {   // Callback is optional
-		  // newDoc is the newly inserted document, including its _id
-		  // newDoc has no key called notToBeSaved since its value was undefined
-		  console.log(err);
-		  console.log(newDoc);
-		});
+	// 缓存
+	_notebooks: null, // []
+	_notebooksMap: {}, // notebookId => {}
+	_notebooksMap2: {}, // serverNotebookId => {}
+	_needReload: true,
+
+	// 缓存起来
+	setCache: function(notebooks) {
+		this._notebooks = [];
+		for(var i = 0; i < notebooks.length; ++i) {
+			var notebook = notebooks[i];
+			this.addCache(notebook);
+		}
 	},
 
-	// 建立关联
+	addCache: function(notebook) {
+		this._notebooks.push(notebook);
+		this._notebooksMap[notebook.NotebookId] = notebook;
+		if (notebook.ServerNotebookId) {
+			this._notebooksMap2[notebook.ServerNotebookId] = notebook;
+		}
+	},
+
+	updateCache: function (notebook) {
+		Tools.extend(this._notebooksMap[notebook.NotebookId], notebook);
+	},
+
+	// 切换用户时, 清空缓存
+	clearCache: function () {
+		this._inited = false;
+		this._notebooks = [];
+		this._notebooksMap = {};
+		this._notebooksMap2 = {};
+	},
+
+	init: function(callback) {
+		if (this._inited) {
+			return callback();
+		}
+		this._inited = true;
+		this.getNotebooks(callback);
+	},
+
+	// 建立关联, 无用
 	_mapNotebooks: function(notebooks) {
 		var me = this;
 		// log(notebooks);
@@ -105,19 +129,57 @@ var Notebook = {
 	getNotebooks: function(callback) {
 		var me = this;
 		var userId = User.getCurActiveUserId();
-		NB.find({UserId: userId, $or: [{LocalIsDelete : { $exists : false }}, {LocalIsDelete: false}] }, function(err, notebooks) {
+		NB.find({UserId: userId, LocalIsDelete: false}, function(err, notebooks) {
 			if(err) {
-				log(err);
+				console.log(err);
 				return callback && callback(false);
 			}
-			
-			callback && callback(me._mapNotebooks(notebooks));
+
+			me.setCache(notebooks);
+
+			callback && callback(notebooks);
+			// callback && callback(me._mapNotebooks(notebooks));
 		});
+	},
+
+	// 得到笔记本
+	getNotebook: function(notebookId, callback) {
+		var me = this;
+		var notebook = this._notebooksMap[notebookId];
+		if(notebook) {
+			return callback(notebook);
+		}
+		NB.findOne({NotebookId: notebookId}, function(err, doc) {
+			if(err || !doc) {
+				console.log(notebookId + ' notebook不存在');
+				callback && callback(false);
+			} else {
+				callback && callback(doc);
+			}
+		});
+	},
+
+	getNotebookFromCache: function(notebookId) {
+		if(notebookId) {
+			return this._notebooksMap[notebookId];
+		}
+		return null;
+	},
+
+	// 获取笔记本标题
+	getNotebookTitleFromCache: function(notebookId, callback) {
+		var me = this;
+		var notebook = me.getNotebookFromCache(notebookId);
+		if (!notebook) {
+			return 'Untitled';
+		}
+		return notebook.Title;
 	},
 
 	// 新建笔记本
 	// 这里, 之前有个大BUG, pull过来后添加到tree上设为IsNew, 导致添加大量重复的notebook
 	addNotebook: function(notebookId, title, parentNotebookId, callback) {
+		var me = this;
 		var notebook = {
 			Title: title,
 			Seq: -1,
@@ -136,6 +198,7 @@ var Notebook = {
 				callback && callback(false);
 			} else {
 				callback && callback(newDoc);
+				me.addCache(newDoc);
 			}
 		});
 	},
@@ -143,10 +206,11 @@ var Notebook = {
 	// 修改笔记本标题
 	updateNotebookTitle: function(notebookId, title, callback) {
 		NB.update({NotebookId: notebookId}, 
-			{Title: title, IsDirty: true, UpdatedTime: new Date()}
-			, function(err, n) {
-			callback(true);
-		});
+			{Title: title, IsDirty: true, UpdatedTime: new Date()},
+			function(err, n) {
+				callback(true);
+				me.updateCache({NotebookId: notebookId, title: title});
+			});
 	},
 
 	// 拖动笔记本
@@ -222,19 +286,6 @@ var Notebook = {
 			}
 			Web.updateNotebookNumberNotes(notebookId, count);
 			NB.update({NotebookId: notebookId}, {NumberNotes: count}, {})
-		});
-	},
-
-	// 得到笔记本
-	getNotebook: function(notebookId, callback) {
-		var me = this;
-		NB.findOne({NotebookId: notebookId}, function(err, doc) {
-			if(err || !doc) {
-				log('不存在');
-				callback && callback(false);
-			} else {
-				callback && callback(doc);
-			}
 		});
 	},
 

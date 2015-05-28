@@ -254,13 +254,17 @@ var Note = {
 		if(isTrash) {
 			query['IsTrash'] = true;
 		}
-		Notes.find(query).sort({'UpdatedTime': -1}).exec(function(err, notes) {
-			// console.log('error ' + err);
-			if(err) {
-				return callback && callback(false);
-			}
-			// console.log(notes);
-			return callback && callback(notes);
+		Notebook.init(function() {
+			Notes.find(query).sort({'UpdatedTime': -1}).exec(function(err, notes) {
+				// console.log('error ' + err);
+				if(err) {
+					return callback && callback(false);
+				}
+				for(var i = 0; i < notes.length; ++i) {
+			        notes[i].NotebookTitle = Notebook.getNotebookTitleFromCache(notes[i].NotebookId);
+		        }
+				callback && callback(notes);
+			});
 		});
 	},
 

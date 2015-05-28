@@ -45,6 +45,7 @@ var RefreshButton = require("../Components/RefreshButton");
 var SyncService = require('../Service/sync');
 var UserService = require('../Service/user');
 var NoteService = require('../Service/note');
+var NotebookService = require('../Service/notebook');
 
 var props = null;
 var AllNoteList = React.createClass({
@@ -104,12 +105,15 @@ var AllNoteList = React.createClass({
 
   _loadNotesFromStorage: function() {
     var me = this;
-    // 从sql中拿
-    NoteService.getNotes(null, function(notes) {
-      // console.log(notes);
-      me.setState( {  notes : notes });
-      me.setState({notesLoaded: true});
-    });
+
+    NotebookService.init(function() {
+      // 从sql中拿
+      NoteService.getNotes(null, function(notes) {
+        // console.log(notes);
+        me.setState({notes: notes});
+        me.setState({notesLoaded: true});
+      });
+    })
     return;
 
     Storage.getAllNotes()
