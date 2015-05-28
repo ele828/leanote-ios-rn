@@ -11,7 +11,7 @@ exports.dateModifier = function(date) {
 
 // 格式化时间
 exports.formatDate = function (date, friendly) {
-  moment.locale("zh-cn"); // 使用中文
+  // moment.locale("zh-cn"); // 使用中文
   date = moment(date);
 
   if (friendly) {

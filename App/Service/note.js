@@ -586,10 +586,10 @@ var Note = {
 			console.log('haha>>lll');
 			console.log(err);
 			// console.log(doc);
-			if(doc.length > 1) {
+			if(doc && doc.length > 1) {
 				console.error(doc.length + '. ..');
+				console.log('note length: ' + doc.length + '. ..');
 			}
-			console.log('note length: ' + doc.length + '. ..');
 			if(err || !doc) {
 				log('getNoteByServerNoteId 不存在' + noteId);
 				callback && callback(false);

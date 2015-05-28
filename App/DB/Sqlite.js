@@ -58,6 +58,23 @@ database.executeSQL(
 
 var db = SQLite.open("leanote.sqlite");
 
+function goNowToDate(goNow) {
+  if(!goNow) {
+    return new Date();
+  }
+  // new Date();
+  if(typeof goNow == 'object') {
+    return date;
+  }
+  var str = goNow.substr(0, 10) + " " + goNow.substr(11, 8);
+  str = str.replace(/-/g, '/'); // 2015/05/03 12:12:33
+  try {
+    return new Date(str);
+  } catch(e) {
+    return new Date();
+  }
+}
+
 // 数据操作基类
 function BaseDb(dbname) {
   this.dbname = dbname;
@@ -119,7 +136,7 @@ BaseDb.prototype._where = function(query) {
     }
     // 如果是日期 
     else if(value instanceof Date) {
-
+      value = Date.getTime();
     } 
     // 对象类型
     else {
@@ -166,7 +183,7 @@ BaseDb.prototype.fixValue = function(key, value) {
     if(key == 'Tags' && value) {
       value = value.join(',');
     }
-    // 日期
+    // 日期, 转成数字
     else if(value instanceof Date) {
       value = value.getTime();
     }
@@ -175,6 +192,22 @@ BaseDb.prototype.fixValue = function(key, value) {
       value = JSON.stringify(value);
     }
   }
+
+  if(key == 'UpdatedTime'
+    || key == 'CreatedTime'
+    || key == 'PublicTime'
+    || key == 'LastSyncTime') {
+
+    if(typeof value != 'number') {
+      value = goNowToDate(value);
+      try {
+        value = value.getTime(); 
+      } catch(e) {
+        value = 0;
+      }
+    }
+  }
+
   return value;
 },
 
@@ -258,11 +291,12 @@ Notes.find(query).sort({'UpdatedTime': -1}).exec(function(err, notes) {
 
 BaseDb.prototype.fixTime = function(row) {
   if(!row) {
-    return;
+    return row;
   }
   row.CreatedTime && (row.CreatedTime = new Date(Math.floor(row.CreatedTime)));
   row.UpdatedTime && (row.UpdatedTime = new Date(Math.floor(row.UpdatedTime)));
   row.PublicTime && (row.PublicTime = new Date(Math.floor(row.PublicTime)));
+  return row;
 };
 
 BaseDb.prototype.fixRow = function(row) {
@@ -271,7 +305,7 @@ BaseDb.prototype.fixRow = function(row) {
 
 BaseDb.prototype.fixRows = function(rows) {
   if(!rows) {
-    return;
+    return rows;
   }
   for(var i = 0; i < rows.length; ++i) {
     if(rows[i]) {
@@ -343,6 +377,9 @@ BaseDb.prototype._find = (function() {
       // console.log('???');
     }, function afterCb(err) {
       // console.log('aftercb...' + afterCallback);
+      if(!err) {
+        rows = me.fixRows(rows);
+      }
       afterCallback && afterCallback(err, rows);
     });
   }
@@ -352,7 +389,6 @@ BaseDb.prototype._find = (function() {
 // 查找
 BaseDb.prototype.find = function(query, afterCallback, rowCallback) {
   var me = this;
-  console.log(query);
   return new this._find(this, query, afterCallback, rowCallback);
 };
 
@@ -363,7 +399,7 @@ BaseDb.prototype.findOne = function(query, callback) {
   q.limit(1).exec(
   function(err, rows) {
     if(!err && rows) {
-      var rows = me.fixRows(rows);
+      // var rows = me.fixRows(rows);
       console.log(rows + '>>>>>>>>>>>>>>>>>');
       callback && callback(err, rows[0]);
     }

@@ -307,8 +307,14 @@ var Notebook = {
 				// 否则, 就用服务器上的
 			}
 
+
+			console.log('?ever: ' + notebook.CreatedTime);
+
 			notebook.CreatedTime = Common.goNowToDate(notebook.CreatedTime);
 			notebook.UpdatedTime = Common.goNowToDate(notebook.UpdatedTime);
+
+			console.log('???????????: ' + notebook.CreatedTime);
+			console.log('???????????: ' + notebook.CreatedTime.getTime());
 
 			notebook.IsDirty = false;
 			notebook.LocalIsNew = false;

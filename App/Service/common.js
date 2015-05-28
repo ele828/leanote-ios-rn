@@ -154,6 +154,7 @@ var Common = {
 			return date;
 		}
 		var str = goNow.substr(0, 10) + " " + goNow.substr(11, 8);
+		str = str.replace(/-/g, '/');
 		try {
 			return new Date(str);
 		} catch(e) {

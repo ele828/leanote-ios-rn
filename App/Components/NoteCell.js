@@ -13,6 +13,7 @@ var {
 
 var Base = require("../Common/Base");
 var Icon = require("react-native-icons");
+var Tools = require('../Common/Tools');
 
 var Tweet = React.createClass({
 
@@ -45,7 +46,7 @@ var Tweet = React.createClass({
                 color='#ccc'
                 style={styles.clockIcon}
               />
-              <Text style={styles.updateTime}>{note["UpdatedTime"]}</Text>
+              <Text style={styles.updateTime}>{Tools.formatDate(note["UpdatedTime"])}</Text>
             </View>
         </View>
       </TouchableHighlight>

@@ -104,6 +104,7 @@ var AllNoteList = React.createClass({
 
   _loadNotesFromStorage: function() {
     var me = this;
+    // 从sql中拿
     NoteService.getNotes(null, function(notes) {
       // console.log(notes);
       me.setState( {  notes : notes });
@@ -210,6 +211,7 @@ var AllNoteList = React.createClass({
     var Notes = <View></View>;
 
     if(this.state.notes.length !== 0) {
+      // console.log(this.state.notes[0].UpdatedTime);
       Notes = this.state.notes.map((note) => {
         return <NoteCell note={note} goToNote={this.goToNote} />;
       });
