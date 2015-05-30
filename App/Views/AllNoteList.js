@@ -208,7 +208,7 @@ var AllNoteList = React.createClass({
     }
 
     if(this.state.fetchingNotes === true) {
-      this.msg = <Msg msg="更新笔记中..."/>;
+      this.msg = <Msg msg="同步笔记中..."/>;
     } else {
       this.msg = <View></View>;
     }
