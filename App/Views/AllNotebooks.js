@@ -2,7 +2,7 @@
  * 笔记本视图
  *
  */
-'use strict'
+'use strict';
 
 var React = require('react-native');
 var {
@@ -18,12 +18,12 @@ var {
   ActivityIndicatorIOS
 } = React;
 
-var Base = require("../Common/Base");
-var NotebookCell = require("../Components/NotebookCell");
-var ChildNoteList = require("./ChildNoteList");
+var Base = require('../Common/Base');
+var NotebookCell = require('../Components/NotebookCell');
+var ChildNoteList = require('./ChildNoteList');
 
 // 本地储存
-var Storage = require("../Common/Storage");
+var Storage = require('../Common/Storage');
 
 var TimerMixin = require('react-timer-mixin');
 
@@ -49,7 +49,7 @@ var NotebooksView = React.createClass({
 
   goToNoteList(notebook) {
     this.props.toRoute({
-      name: notebook["Title"],
+      name: notebook.Title,
       component: ChildNoteList,
       data: notebook
     });
@@ -57,7 +57,7 @@ var NotebooksView = React.createClass({
 
   render() {
     var notebooksList = <View></View>;
-    if(this.state.notebooks.length !== 0) {
+    if (this.state.notebooks.length !== 0) {
       notebooksList = this.state.notebooks.map((nb)=>{
         return (<NotebookCell notebook={nb} goToNoteList={this.goToNoteList}/>);
       });
@@ -75,7 +75,7 @@ var NotebooksView = React.createClass({
 
 var styles = StyleSheet.create({
   container: {
-    height: Base.height-64,
+    height: Base.height - 64,
     backgroundColor: '#fff',
   }
 });

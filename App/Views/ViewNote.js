@@ -10,9 +10,9 @@ var {
   Text
 } = React;
 
-var Base = require("../Common/Base");
-var Icon = require("react-native-icons");
-var Fetcher = require("../Common/Fetcher");
+var Base = require('../Common/Base');
+var Icon = require('react-native-icons');
+var Fetcher = require('../Common/Fetcher');
 var HTMLWebView = require('react-native-html-webview');
 // var Markdown = require('react-native-markdown');
 var Tools = require('../Common/Tools');
@@ -21,14 +21,14 @@ var NoteService = require('../Service/note');
 
 module.exports = React.createClass({
   getInitialState() {
-      return {
-        isMarkdown: false,
-        content: '',
-      }
+    return {
+      isMarkdown: false,
+      content: '',
+    };
   },
 
   componentDidMount() {
-    var me = this;
+    var self = this;
     this.setState({isMarkdown : this.props.data.note["IsMarkdown"]});
 
     NoteService.getNoteContent(this.props.data.note["NoteId"], function(note) {
@@ -36,7 +36,7 @@ module.exports = React.createClass({
         return;
       }
       var content = note.Content;
-      if(!me.state.isMarkdown) {
+      if (!self.state.isMarkdown) {
         var html = `
           <!DOCTYPE html>
           <html>
@@ -57,7 +57,7 @@ module.exports = React.createClass({
           </body>
           </html>
           `;
-        me.setState({content: html});
+        self.setState({content: html});
       }
       else {
         var html = `
@@ -95,7 +95,7 @@ module.exports = React.createClass({
           </body>
 
           </html>`;
-        me.setState({content: html});
+        self.setState({content: html});
       }
   });
 
@@ -168,7 +168,7 @@ module.exports = React.createClass({
   render() {
     var contentView = (
       <HTMLWebView
-        style={{marginLeft:-20, width: Base.width+30}}
+        style={{marginLeft:-20, width: Base.width + 30}}
         html={this.state.content}
         makeSafe={false}
         autoHeight={true}
@@ -177,19 +177,19 @@ module.exports = React.createClass({
     return (
       <View style={styles.container}>
         <View style={styles.contentView}>
-          <ScrollView style={{position:'absolute', top: 0, height: Base.height-60, width: Base.width}}>
+          <ScrollView style={{position:'absolute', top: 0, height: Base.height - 60, width: Base.width}}>
             <View style={styles.header}>
                 <Text style={styles.title}
                   numberOfLines={1}
                 >
                   {this.props.data.note["Title"]}
                 </Text>
-               
+                
                 <View style={styles.noteInfo}>
                   <Icon
-                    name='fontawesome|book'
+                    name="fontawesome|book"
                     size={13}
-                    color='#ccc'
+                    color="#ccc"
                     style={styles.bookIcon}
                   />
 
@@ -198,19 +198,19 @@ module.exports = React.createClass({
                   </Text>
 
                   <Icon
-                    name='fontawesome|clock-o'
+                    name="fontawesome|clock-o"
                     size={13}
-                    color='#ccc'
+                    color="#ccc"
                     style={styles.clockIcon}
                   />
 
                   <Text style={styles.updatedTime}>
                     {Tools.formatDate(this.props.data.note["UpdatedTime"])}
                   </Text>
-                  
+
                 </View>
 
-                <View style={styles.line}></View>
+                <View style={styles.line} />
             </View>
 
             {contentView}

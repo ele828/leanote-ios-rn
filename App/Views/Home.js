@@ -19,27 +19,27 @@ var {
   ScrollView
 } = React;
 
-var Api = require("../Common/Api");
-var Base = require("../Common/Base");
-var Spinner = require("../Components/Spinner");
+var Api = require('../Common/Api');
+var Base = require('../Common/Base');
+var Spinner = require('../Components/Spinner');
 
 var Router = require('react-native-router');
 var AlLNoteList = require('./AllNoteList.js');
 var About = require('./About');
 
-var BackButton = require("../Components/BackButton");
-var SideBarButton = require("../Components/SideBarButton");
-var RefreshButton = require("../Components/RefreshButton");
-var CloseButton = require("../Components/CloseButton");
+var BackButton = require('../Components/BackButton');
+var SideBarButton = require('../Components/SideBarButton');
+var RefreshButton = require('../Components/RefreshButton');
+var CloseButton = require('../Components/CloseButton');
 
 var SideMenu = require('react-native-side-menu');
-var Icon = require("react-native-icons");
+var Icon = require('react-native-icons');
 
 // 动画组件
-var tweenState = require("react-tween-state");
+var tweenState = require('react-tween-state');
 
 // 侧滑菜单组件
-var Menu = require("../Components/SideMenu");
+var Menu = require('../Components/SideMenu');
 
 module.exports = React.createClass({
   mixins: [tweenState.Mixin],
@@ -104,7 +104,7 @@ module.exports = React.createClass({
 
   // 关闭关于窗口
   _hideAbout: function() {
-    if(this.state.aboutOpened) {
+    if (this.state.aboutOpened) {
       this.tweenState('top', {
         easing: tweenState.easingTypes.easeInOutElastic,
         duration: 800,
@@ -116,7 +116,7 @@ module.exports = React.createClass({
   },
 
   _siderbar: function() {
-    this.refs["sideMenu"].openMenu();
+    this.refs.sideMenu.openMenu();
   },
 
   _refreshNotes: function() {
@@ -150,7 +150,7 @@ module.exports = React.createClass({
           </View>
         </View>
       </SideMenu>
-    )
+    );
   }
 });
 
@@ -170,7 +170,7 @@ var styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
     height: 45,
-    width: Base.width* 2 / 4,
+    width: Base.width * 2 / 4,
   },
   menuHeader: {
     position: 'absolute',

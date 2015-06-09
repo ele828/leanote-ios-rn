@@ -18,9 +18,9 @@ var {
 } = React;
 
 // some Basic properties
-var Api = require("../Common/Api");
-var Base = require("../Common/Base");
-var Spinner = require("../Components/Spinner");
+var Api = require('../Common/Api');
+var Base = require('../Common/Base');
+var Spinner = require('../Components/Spinner');
 
 module.exports = React.createClass({
   _doLogin: function() {
@@ -33,52 +33,52 @@ module.exports = React.createClass({
 
     var email = this.state.email;
     var pwd   = this.state.password;
-    var data  = "?email=" + email + "&pwd=" + pwd;
+    var data  = '?email=' + email + '&pwd=' + pwd;
     var RegAddr = encodeURI(Api.Register + data);
 
     // 合法性检查
-    if(email === "" || pwd === "") {
+    if (email === '' || pwd === '') {
       this.setState({startReg: false});
-      Base.showMsg("注册失败", "请输入基本信息！");
+      Base.showMsg('注册失败', '请输入基本信息！');
       return;
-    } else if(email.indexOf("@") < 0) {
+    } else if (email.indexOf('@') < 0) {
       this.setState({startReg: false});
-      Base.showMsg("注册失败", "请输入正确的邮箱地址！");
+      Base.showMsg('注册失败', '请输入正确的邮箱地址！');
       return;
     }
 
     // 发起注册请求
-    fetch(RegAddr, {method:"POST"})
+    fetch(RegAddr, {method:'POST'})
       .then((response) => response.json())
 
       // 处理注册逻辑
       .then((res)=>{
         // 注册失败
-        if(res["Ok"] === false) {
-          if(res["Msg"] == "errorEmail") {
+        if (res['Ok'] === false) {
+          if (res['Msg'] == 'errorEmail') {
             this.setState({startReg: false});
-            Base.showMsg("注册失败", "请输入合法的邮箱地址！");
+            Base.showMsg('注册失败', '请输入合法的邮箱地址！');
             return;
           }
 
-          if(res["Msg"] == "errorPassword") {
+          if (res['Msg'] == 'errorPassword') {
             this.setState({startReg: false});
-            Base.showMsg("注册失败", "密码格式不正确！");
+            Base.showMsg('注册失败', '密码格式不正确！');
             return;
           }
 
-          if(res["Msg"].indexOf("userHasBeenRegistered") != -1) {
+          if (res['Msg'].indexOf('userHasBeenRegistered') != -1) {
             this.setState({startReg: false});
-            Base.showMsg("注册失败", "该邮箱已被注册！");
+            Base.showMsg('注册失败', '该邮箱已被注册！');
             return;
           }
 
         }
 
         // 注册成功
-        if(res["Ok"] === true) {
+        if (res['Ok'] === true) {
           this.setState({startReg: false});
-          Base.showMsg("注册成功", "恭喜您，账户创建成功！");
+          Base.showMsg('注册成功', '恭喜您，账户创建成功！');
           this.props.navigator.replace({ id: 'home' });
           return;
         }
@@ -86,7 +86,7 @@ module.exports = React.createClass({
       })
       .catch((err)=>{
         this.setState({startReg: false});
-        Base.showMsg("注册失败", "网络错误！");
+        Base.showMsg('注册失败', '网络错误！');
         return;
       })
       .done();
@@ -97,7 +97,7 @@ module.exports = React.createClass({
       email: '',
       password: '',
       startReg: false
-    }
+    };
   },
   render: function() {
     // 隐藏状态栏
@@ -118,7 +118,7 @@ module.exports = React.createClass({
               returnKeyType="next"
               onChangeText={(email) => this.setState({email: email})}
               onEndEditing={()=>{
-                this.refs["pwInput"].focus();
+                this.refs.pwInput.focus();
               }}
             />
             <View style={styles.line}></View>
@@ -167,7 +167,7 @@ var styles = StyleSheet.create({
   inputs: {
     marginTop: 30,
     height: 40,
-    width: Base.width/1.3,
+    width: Base.width / 1.3,
     padding: 10
   },
   line: {
@@ -186,7 +186,7 @@ var styles = StyleSheet.create({
   },
   Reg: {
     alignItems: 'center',
-    width: Base.width/1.3,
+    width: Base.width / 1.3,
     height: 40,
     backgroundColor: '#019b0d',
   },

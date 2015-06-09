@@ -36,9 +36,9 @@ var leanote = React.createClass({
         case 'login':
           return <Login navigator={nav}/>;
         case 'register':
-          return <Register navigator={nav}/>
+          return <Register navigator={nav}/>;
         case 'jumping':
-          return <Vv navigator={nav}/>
+          return <Vv navigator={nav}/>;
         default:
           return (
             <Login navigator={nav}/>
@@ -50,17 +50,17 @@ var leanote = React.createClass({
     return (
       <Navigator
       style={{backgroundColor: '#fff'}}
-      initialRoute={{ id: "login" }}
+      initialRoute={{ id: 'login' }}
       renderScene={this.renderScene}
       configureScene={(route) => {
           if (route.sceneConfig) {
               return route.sceneConfig;
           }
-          return Navigator.SceneConfigs.FloatFromRight
+          return Navigator.SceneConfigs.FloatFromRight;
         }
       }
     />
-    )
+    );
   }
 });
 
