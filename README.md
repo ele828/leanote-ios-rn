@@ -1,10 +1,6 @@
-![leanote](https://raw.githubusercontent.com/leanote/leanote-ios/master/iOS/Images.xcassets/lealogo.imageset/lealogo.png)
+![leanote](https://github.com/leanote/leanote-ios-rn/blob/master/iOS/Images.xcassets/lealogo.imageset/lealogo.png)
 # Leanote for iOS
 Based on React-Native, under developing.
-
-## 运行截图:
-
-![launch](http://i1.tietuku.com/cae5ce8c2ba4c0fc.png)
 
 # 已实现的功能
 
