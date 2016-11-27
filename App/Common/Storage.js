@@ -10,45 +10,26 @@ var {
 } = React;
 
 function getAllNotes() {
-  return new Promise((resolve, reject) => {
-    AsyncStorage.getItem('Note:all')
-      .then((notes)=>{
-        resolve(notes);
-      })
-      .catch(()=>{
-        reject("getallnotes-error");
-      });
-  });
+  return AsyncStorage.getItem('Note:all');
 }
 
 function getAllNoteBooks() {
-  return new Promise((resolve, reject) => {
-    AsyncStorage.getItem('Notebook:all')
-      .then((notebooks)=>{
-        resolve(notebooks);
-      })
-      .catch(()=>{
-        reject("getallnotebooks-error");
-      });
-  });
+  return AsyncStorage.getItem('Notebook:all');
 }
 
 function getNotesByNotebookId(notebookId) {
-  return new Promise((resolve, reject) => {
-    // 获取所有的笔记本
-    AsyncStorage.getItem('Note:all')
-        .then((notes) => {
-          var ns = JSON.parse(notes);
-          var noteList = ns.filter((note) => {
-            if(note["NotebookId"] === notebookId) {
-               return note;
-            }
-          });
-          resolve(noteList);
-        });
-  });
+  // 获取所有的笔记本
+  return AsyncStorage.getItem('Note:all')
+    .then((notes) => {
+      var ns = JSON.parse(notes);
+      return ns.filter((note) => {
+        if(note["NotebookId"] === notebookId) {
+            return note;
+        }
+      });
+    });
 }
 
-exports.getAllNoteBooks      = getAllNoteBooks;
-exports.getAllNotes          = getAllNotes;
+exports.getAllNotes = getAllNotes;
+exports.getAllNoteBooks = getAllNoteBooks;
 exports.getNotesByNotebookId = getNotesByNotebookId;

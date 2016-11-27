@@ -5,8 +5,8 @@ exports.dateModifier = function(date) {
   return date === "" || date === undefined
          ? ""
          : date.replace('T', ' ')
-                .replace('+', ' ')
-                .split(".")[0];
+            .replace('+', ' ')
+            .split(".")[0];
 }
 
 // 格式化时间
