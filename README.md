@@ -1,16 +1,28 @@
 ![leanote](https://github.com/leanote/leanote-ios-rn/blob/master/iOS/Images.xcassets/lealogo.imageset/lealogo.png)
 # Leanote for iOS
-Based on React-Native, under developing.
+基于React Native的Leanote云笔记应用 https://leanote.com/
+
+# 截图
+
+登录界面
+![](https://github.com/leanote/leanote-ios-rn/blob/master/screenshot/login.png)
+
+注册界面
+![](https://github.com/leanote/leanote-ios-rn/blob/master/screenshot/register.png)
+
+主界面
+![](https://github.com/leanote/leanote-ios-rn/blob/master/screenshot/home.png)
+
+侧滑菜单
+![](https://github.com/leanote/leanote-ios-rn/blob/master/screenshot/drawer.png)
 
 # 已实现的功能
-
 1. 登录
 2. 注册
 3. 所有笔记视图
 4. 笔记和笔记本增量更新
 
 # Todos
-
 1. HTML和Markdown显示
 2. 笔记编辑器(wordpress编辑器)集成
 3. 个人账户视图和逻辑的实现
@@ -18,7 +30,6 @@ Based on React-Native, under developing.
 5. 特定笔记本的显示
 6. 关于我们视图
 7. 代码重构
-
 
 # 依赖 react-native-sqlite
 
