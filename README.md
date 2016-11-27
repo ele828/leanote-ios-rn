@@ -4,17 +4,13 @@
 
 # 截图
 
-登录界面
-![](https://github.com/leanote/leanote-ios-rn/blob/master/screenshot/login.png)
+<img width="450"src="https://github.com/leanote/leanote-ios-rn/blob/master/screenshot/login.png">
 
-注册界面
-![](https://github.com/leanote/leanote-ios-rn/blob/master/screenshot/register.png)
+<img width="450"src="https://github.com/leanote/leanote-ios-rn/blob/master/screenshot/register.png">
 
-主界面
-![](https://github.com/leanote/leanote-ios-rn/blob/master/screenshot/home.png)
+<img width="450"src="https://github.com/leanote/leanote-ios-rn/blob/master/screenshot/home.png">
 
-侧滑菜单
-![](https://github.com/leanote/leanote-ios-rn/blob/master/screenshot/drawer.png)
+<img width="450"src="https://github.com/leanote/leanote-ios-rn/blob/master/screenshot/drawer.png">
 
 # 已实现的功能
 1. 登录
