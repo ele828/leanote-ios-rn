@@ -136,7 +136,7 @@ function getSyncNotes() {
           usn = 0;
         }
 
-        getToken().then(()=>{
+        return getToken().then(()=>{
             // 获取所有笔记
             var params = "?token=" + TOKEN + "&afterUsn=" + usn + "&maxEntry=" + 1000;
             var syncNotesAddr = encodeURI(Api.SyncNotes + params);
@@ -183,7 +183,7 @@ function getSyncNotes() {
                   }
                   return [notes, notebooks, noteToBedelete]
             })
-            .then((notes, notebooks, noteToBedelete) => {
+            .then(([notes, notebooks, noteToBedelete]) => {
               notes = notes.reverse();
               var newUsn = res[i-1]["Usn"].toString();
               // 获取原先所有的数据
