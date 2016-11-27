@@ -16,21 +16,15 @@ var Storage = require("./Storage");
 
 // 获取用户token
 function getToken() {
-  return new Promise((resolve, reject) => {
     if(global.TOKEN !== undefined) {
-      resolve(global.TOKEN);
-      return;
+      return Promise.resolve(global.TOKEN);
     }
-    AsyncStorage.getItem("User:token")
+    
+    return AsyncStorage.getItem("User:token")
       .then((token) => {
         // 写入全局变量
-        global.TOKEN = token;
-        resolve(TOKEN);
-      })
-      .catch(() => {
-          reject();
+        return global.TOKEN = token;
       });
-  })
 }
 
 // 获取增量笔记本并同步到本地储存中
