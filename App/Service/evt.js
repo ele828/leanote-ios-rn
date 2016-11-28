@@ -42,7 +42,7 @@ var Evt = {
 	getAllAttachLocalUrl: function(noteId) {
 		return this.localUrl + '/api/file/getAllAttachs?noteId=' + noteId;
 	},
-	getProjectBasePath: function() { 
+	getProjectBasePath: function() {
 		var dirname = __dirname;
 		// /app/node_modules
 		return dirname.replace('/node_modules', '').replace('\\node_modules', ''); // windows情况

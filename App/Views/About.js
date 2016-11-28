@@ -19,8 +19,8 @@ var {
   ScrollView
 } = React;
 
-var SideBarButton = require("../Components/SideBarButton");
-var CloseButton = require("../Components/CloseButton");
+var SideBarButton = require('../Components/SideBarButton');
+var CloseButton = require('../Components/CloseButton');
 
 class About extends React.Component {
   render() {

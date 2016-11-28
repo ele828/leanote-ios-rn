@@ -18,27 +18,27 @@ var {
   StatusBarIOS
 } = React;
 
-var Api = require("../Common/Api");
-var Base = require("../Common/Base");
-var Tools = require("../Common/Tools");
-var Spinner = require("../Components/Spinner");
+var Api = require('../Common/Api');
+var Base = require('../Common/Base');
+var Tools = require('../Common/Tools');
+var Spinner = require('../Components/Spinner');
 
 var UserService = require('../Service/user');
 var ApiService = require('../Service/api');
 
 var LoginView = React.createClass({
   _doLogin: function() {
-    var me = this;
+    var self = this;
 
     AsyncStorage.clear();
     this.setState({startLogin: true});
 
     // 构造登录数据
     var host = this.state.host;
-    if(this.state.addHost) {
-      if(!host || !Tools.isValidUrl(host)) {
+    if (this.state.addHost) {
+      if (!host || !Tools.isValidUrl(host)) {
         this.setState({startLogin: false});
-        Base.showMsg("登录失败", "请输入正确的自建服务地址!");
+        Base.showMsg('登录失败', '请输入正确的自建服务地址!');
         return;
       }
     }
@@ -50,16 +50,16 @@ var LoginView = React.createClass({
     var pwd   = this.state.password;
 
     // 合法性检查
-    if(email === "" || pwd === "") {
+    if (email === '' || pwd === '') {
       this.setState({startLogin: false});
-      Base.showMsg("登录失败", "请输入登录信息!");
+      Base.showMsg('登录失败', '请输入登录信息!');
       return;
     }
     /*
      允许使用用户名和密码
-     else if(email.indexOf("@") < 0) {
+     else if(email.indexOf('@') < 0) {
       this.setState({startLogin: false});
-      Base.showMsg("登录失败", "请输入正确的邮箱地址！");
+      Base.showMsg('登录失败', '请输入正确的邮箱地址！');
       return;
     }
     */
@@ -70,45 +70,44 @@ var LoginView = React.createClass({
     formData.append('email', email);
     formData.append('pwd', pwd);
     */
-   
     ApiService.auth(email, pwd, host, function(res) {
       // 用户名或密码错误
-      if(!res) {
-        console.error("用户名或密码错误!");
-        me.setState({startLogin: false});
-        Base.showMsg("登录失败", "用户名或密码错误!");
+      if (!res) {
+        console.error('用户名或密码错误!');
+        self.setState({startLogin: false});
+        Base.showMsg('登录失败', '用户名或密码错误!');
         return;
       }
 
       // 登录成功
       // 这部分可不要了 TODO
-      if(res["Ok"] === true) {
-        var token  = res["Token"],
-            userId = res["UserId"],
-            email  = res["Email"];
+      if (res['Ok'] === true) {
+        var token  = res['Token'],
+            userId = res['UserId'],
+            email  = res['Email'];
 
         // 储存用户信息以及Token
-        AsyncStorage.setItem("User:token", token)
+        AsyncStorage.setItem('User:token', token)
           .catch((err)=>{
-            me.setState({startLogin: false});
-            Base.showMsg("系统错误", "登录失败，请重试！");
+            self.setState({startLogin: false});
+            Base.showMsg('系统错误', '登录失败，请重试！');
           });
 
-        AsyncStorage.setItem("User:id", userId)
+        AsyncStorage.setItem('User:id', userId)
           .catch((err)=>{
-            me.setState({startLogin: false});
-            Base.showMsg("系统错误", "登录失败，请重试！");
+            self.setState({startLogin: false});
+            Base.showMsg('系统错误', '登录失败，请重试！');
           });
 
-        AsyncStorage.setItem("User:email", email)
+        AsyncStorage.setItem('User:email', email)
           .catch((err)=>{
-            me.setState({startLogin: false});
-            Base.showMsg("系统错误", "登录失败，请重试！");
+            self.setState({startLogin: false});
+            Base.showMsg('系统错误', '登录失败，请重试！');
           });
 
         // 跳转到主界面
-        me.setState({startLogin: false});
-        me.props.navigator.replace({ id: 'home' });
+        self.setState({startLogin: false});
+        self.props.navigator.replace({ id: 'home' });
         return;
       }
     });
@@ -116,7 +115,7 @@ var LoginView = React.createClass({
     return;
 
     // https://github.com/facebook/react-native/blob/62b90cfcc5c254076541ed8dc6372e16444b41ba/Libraries/Fetch/fetch.js
-    var data  = "?email=" + encodeURI(email) + "&pwd=" + encodeURI(pwd);
+    var data  = '?email=' + encodeURI(email) + '&pwd=' + encodeURI(pwd);
     var loginAddr;
     if(host) {
       loginAddr = host + '/api/auth/login';
@@ -132,38 +131,38 @@ var LoginView = React.createClass({
       .then((res)=>{
 
         // 用户名或密码错误
-        if(res["Ok"] === false) {
-          console.error("用户名或密码错误!");
+        if (res['Ok'] === false) {
+          console.error('用户名或密码错误!');
           this.setState({startLogin: false});
-          Base.showMsg("登录失败", "用户名或密码错误!");
+          Base.showMsg('登录失败', '用户名或密码错误!');
           return;
         }
 
         // 登录成功
-        if(res["Ok"] === true) {
-          var token  = res["Token"],
-              userId = res["UserId"],
-              email  = res["Email"];
+        if (res['Ok'] === true) {
+          var token  = res['Token'],
+              userId = res['UserId'],
+              email  = res['Email'];
 
 
 
           // 储存用户信息以及Token
-          AsyncStorage.setItem("User:token", token)
+          AsyncStorage.setItem('User:token', token)
             .catch((err)=>{
               this.setState({startLogin: false});
-              Base.showMsg("系统错误", "登录失败，请重试！");
+              Base.showMsg('系统错误', '登录失败，请重试！');
             });
 
-          AsyncStorage.setItem("User:id", userId)
+          AsyncStorage.setItem('User:id', userId)
             .catch((err)=>{
               this.setState({startLogin: false});
-              Base.showMsg("系统错误", "登录失败，请重试！");
+              Base.showMsg('系统错误', '登录失败，请重试！');
             });
 
-          AsyncStorage.setItem("User:email", email)
+          AsyncStorage.setItem('User:email', email)
             .catch((err)=>{
               this.setState({startLogin: false});
-              Base.showMsg("系统错误", "登录失败，请重试！");
+              Base.showMsg('系统错误', '登录失败，请重试！');
             });
 
           // 跳转到主界面
@@ -190,21 +189,21 @@ var LoginView = React.createClass({
 
   // 判断用户是否已经登录, 如果登录了, 则直接到主页
   componentDidMount: function() {
-    var me = this;
+    var self = this;
 
     // 使用sqlite
     UserService.init(function(user) {
       if(user) {
-          me.setState({logined: true});
-          me.props.navigator.replace({ id: 'home' });
+          self.setState({logined: true});
+          self.props.navigator.replace({ id: 'home' });
         } else {
-          me.setState({logined: false});
+          self.setState({logined: false});
         }
     });
 
     /*
     // AsyncStorage.clear();
-    AsyncStorage.getItem("User:token")
+    AsyncStorage.getItem('User:token')
       .then((token)=>{
         if(token !== null) {
           this.setState({logined: true});
@@ -217,7 +216,6 @@ var LoginView = React.createClass({
         this.setState({logined: false});
       });
     */
-    
   },
 
   getInitialState: function() {
@@ -226,7 +224,7 @@ var LoginView = React.createClass({
       password: '',
       startLogin: false,
       logined: true // 默认是已登录, -> render -> componentDidMount -> reRender
-    }
+    };
   },
 
   render: function() {
@@ -239,9 +237,9 @@ var LoginView = React.createClass({
 
     var loginView = this.state.logined ?
       (<View></View>)
-      :(<View style={styles.container}>
+       : (<View style={styles.container}>
             <View style={styles.logoContainer}>
-              <Image source={require('image!leanote_icon_blue')} style={styles.logo}/>
+              <Image source={require("image!leanote_icon_blue")} style={styles.logo}/>
             </View>
             <View style={styles.form}>
 
@@ -255,7 +253,7 @@ var LoginView = React.createClass({
                     returnKeyType="next"
                     onChangeText={(host) => this.setState({host: host})}
                     onEndEditing={()=>{
-                      this.refs["email"].focus();
+                      this.refs.email.focus();
                     }}
                   /><View style={styles.line}></View></View>
                   )
@@ -271,7 +269,7 @@ var LoginView = React.createClass({
                     returnKeyType="next"
                     onChangeText={(email) => this.setState({email: email})}
                     onEndEditing={()=>{
-                      this.refs["pwInput"].focus();
+                      this.refs.pwInput.focus();
                     }}
                   />
                   <View style={styles.line}></View>
@@ -299,7 +297,7 @@ var LoginView = React.createClass({
                   <TouchableOpacity activeOpacity="0.5" onPress={this._addSelfHost}>
                     <View style={[styles.Reg, styles.selfHost]}>
                         <Text style={[styles.RegText, styles.selfHostText]}>
-                        {this.state.addHost ? "使用Leanote服务" : "添加自建服务"}
+                        {this.state.addHost ? '使用Leanote服务' : '添加自建服务'}
                         </Text>
                     </View>
                   </TouchableOpacity>
@@ -314,7 +312,7 @@ var LoginView = React.createClass({
             </View>
               {spinner}
           </View>
-      )
+      );
     return loginView;
   }
 });
@@ -352,7 +350,7 @@ var styles = StyleSheet.create({
   },
   inputs: {
     height: 40,
-    width: Base.width/1.3,
+    width: Base.width / 1.3,
     fontSize: 14,
     padding: 10,
   },
@@ -365,7 +363,7 @@ var styles = StyleSheet.create({
   },
   Login: {
     alignItems: 'center',
-    width: Base.width/1.3,
+    width: Base.width / 1.3,
     height: 40,
     backgroundColor: '#0379d5',
     // borderRadius: 5,
@@ -389,7 +387,7 @@ var styles = StyleSheet.create({
     // left: 0,
     // right: 0,
     // alignItems: 'center',
-    width: Base.width/1.3,
+    width: Base.width / 1.3,
   },
   selfHostText: {
     alignSelf: 'center',
